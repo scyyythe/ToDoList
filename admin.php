@@ -14,10 +14,10 @@
         <h3>ToDo</h3>
             <div class="menu">
                  <ul>
-                <li><a href="" class="dashboard">Dashboard</a></li>
-                <li><a href="" class="manage">Manage</a></li>
-                <li><a href="" class="payments">Payments</a></li>
-                <li><a href="login.php">Sign Out</a></li>
+                <li><i class='bx bxs-dashboard'></i>&nbsp;&nbsp;<a href="" class="dashboard">Dashboard</a></li>
+                <li><i class='bx bxs-user'></i>&nbsp;&nbsp;<a href="" class="manage">Manage</a></li>
+                <li><i class='bx bx-credit-card'></i>&nbsp;&nbsp;<a href="" class="payments">Payments</a></li>
+                <li><i class='bx bxs-arrow-to-left'></i>&nbsp;&nbsp;<a href="login.php">Sign Out</a></li>
             </ul>
             </div>
            
@@ -207,7 +207,7 @@
 
         <!-- Payments -->
         <div class="container payments-con" id="payments-con">
-            <h1>Premiuim Plan Payments</h1>
+        <h5><strong>Payments</strong></h5>
             <table class="table users">
                 <thead>
                   <tr>

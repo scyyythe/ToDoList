@@ -1,33 +1,43 @@
 <?php
-  session_start();
-  include("connection.php");
+session_start();
+include("connection.php");
 
-  if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+$error = "";
+$success = "";
+$result = [];
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
     // Fetch user from the database based on the username
-    $statement = $conn->prepare("SELECT u_id, u_name, username, password FROM accounts WHERE username = :username");
+    $statement = $conn->prepare("SELECT u_id, u_name, username, password, u_type FROM accounts WHERE username = :username");
     $statement->bindValue(':username', $username);
     $statement->execute();
     $user = $statement->fetch(PDO::FETCH_ASSOC);
 
-    if ($user && password_verify($password, $user['password'])) {
-        // Set session variables on successful login
+    $result = $user && password_verify($password, $user['password']);
+
+    if ($result) {
+       
         $_SESSION['u_id'] = $user['u_id'];
         $_SESSION['username'] = $user['username'];
-        $_SESSION['name'] = $user['u_name'];  
+        $_SESSION['name'] = $user['u_name']; 
+        $_SESSION['u_type'] = $user['u_type'];  
 
-        header("Location:index.php");
-        die;
+     
+        if ($user['u_type'] == 'Admin') { 
+            header("Location: admin.php");  
+        } else if ($user['u_type'] == 'User') {
+            header("Location: index.php");  
+        }
+        die;  
     } else {
-        echo "Invalid credentials";
+        $error = "Invalid credentials";  
     }
 }
 ?>
 
-
-?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -45,6 +55,19 @@
 
         <div class="container form-con">
         <div class="login-form">    
+
+
+        <div class="alert-message-container-login">
+                    <?php if (!empty($success)): ?>
+                        <div class="alert alert-success" role="alert">
+                            <?= $success; ?>
+                        </div>
+                    <?php elseif (!empty($error)): ?>
+                        <div class="alert alert-danger" role="alert">
+                            <?= $error; ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
 
             <form  method="POST"  class="login">
                 <h1><b>Sign in to ToDo</b></h1>

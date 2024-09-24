@@ -23,11 +23,10 @@
 
 
 }
+.sidebar h3{
+    font-weight: 800;
+}
 .menu{
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
     line-height: 4;
     height: 50%;
 
@@ -37,7 +36,7 @@
     }
 
     a:hover{
-        color: red;
+        color: rgb(127, 10, 182);
     }
 }
 .sidebar li{
@@ -54,6 +53,7 @@
     position: relative;
     margin: 0 auto;
     padding: 20px;
+    padding-left: 50px;
     width: 87%;
     height: 100vh;
     float: right;

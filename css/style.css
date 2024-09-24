@@ -20,6 +20,10 @@ body, html {
     bottom: 13px;
     height: 20px;
 }
+.alert-message-container-login{
+    position: relative;
+    width: 300px;
+}
 .alert{
     width: 200px;
     position: relative;
