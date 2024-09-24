@@ -1,3 +1,13 @@
+<?php
+  include_once("connection.php");
+
+  $statement=$conn->prepare("SELECT * FROM accounts");
+  $statement->execute();
+  $user=$statement->fetchAll(PDO::FETCH_ASSOC);
+  $users=$statement->fetchAll(PDO::FETCH_ASSOC);
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -61,23 +71,26 @@
                     <table class="table">
                         <thead>
                           <tr>
+                            <th scope="col">#</th>
                             <th scope="col">ID</th>
                             <th scope="col">Name</th>
-                            <th scope="col">Plan</th>
+                            <th scope="col">Email</th>
                             <th scope="col">Status</th>
                             <th scope="col">Action</th>
                           </tr>
                         </thead>
                         
                         <tbody>
-                          <tr>
-                            <th scope="row">1</th>
-                            <td>Angel Canete</td>
-                            <td>Basic</td>
-                            <td>Pending</td>
+                       <?php foreach($user as $i =>$user):?>
+                        <tr>
+                        <th scope="row"><?php echo $i + 1; ?></th>
+                            <td><?php echo $user['u_id']?></td>
+                            <td><?php echo $user['u_name']?></td>
+                            <td><?php echo $user['email']?></td>
+                            <td><?php echo $user['u_status']?></td>
                             <td> <button type="button" class="btn btn-primary btn-sm">Activate</button></td>
                           </tr>
-                
+                          <?php endforeach ?>
                         </tbody>
                       </table>
                 </div>
@@ -93,9 +106,9 @@
            <table class="table users">
             <thead>
               <tr>
+              <th scope="col">#</th>
                 <th scope="col">ID</th>
                 <th scope="col">Name</th>
-                <th scope="col">Email</th>
                 <th scope="col">Plan</th>
                 <th scope="col">Status</th>
                 <th scope="col">Action</th>
@@ -103,13 +116,16 @@
             </thead>
             
             <tbody>
+
+            <?php foreach($users as $i =>$user):?>
               <tr>
-                <th scope="row">1</th>
-                <td>Angel Canete</td>
-                <td>caneteangel187@gmail.com</td>
-                <td>Basic</td>
-                <td>Pending</td>
-                <td>
+                  <th scope="row"><?php echo $i + 1; ?></th>
+                     <td><?php echo $users['u_id']?></td>
+                     <td><?php echo $users['u_name']?></td>
+                      <td>Basic</td>
+                    <td><?php echo $users['u_status']?></td>
+
+                    <td>
          <button type="button" class="btn btn-primary btn-view" data-bs-toggle="modal" data-bs-target="#modalview" data-bs-whatever="@mdo">View</button>
 
          <button type="button" class="btn btn-primary btn-edit"
@@ -117,9 +133,10 @@
 
          <button type="button" class="btn btn-primary btn-delete">Delete</button>
                 </td>
-              
               </tr>
-    
+              
+              <?php endforeach ?>
+      
             </tbody>
           </table>
            
