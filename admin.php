@@ -1,10 +1,15 @@
 <?php
   include_once("connection.php");
 
-  $statement=$conn->prepare("SELECT * FROM accounts");
+  $statement = $conn->prepare("SELECT * FROM accounts WHERE u_status = 'pending'");
   $statement->execute();
-  $user=$statement->fetchAll(PDO::FETCH_ASSOC);
-  $users=$statement->fetchAll(PDO::FETCH_ASSOC);
+  $user = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+  $statement = $conn->prepare("SELECT * FROM accounts WHERE u_status= 'active'");
+  $statement->execute();
+  $users = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+
 
 ?>
 
@@ -109,115 +114,37 @@
               <th scope="col">#</th>
                 <th scope="col">ID</th>
                 <th scope="col">Name</th>
+                <th scope="col">Email</th>
                 <th scope="col">Plan</th>
-                <th scope="col">Status</th>
-                <th scope="col">Action</th>
+                <th scope="col">Status</th>       
+                <th scope="col">Update</th>
+                <th scope="col">Delete</th>
               </tr>
             </thead>
             
             <tbody>
 
-            <?php foreach($users as $i =>$user):?>
+            <?php foreach($users as $i =>$users):?>
               <tr>
                   <th scope="row"><?php echo $i + 1; ?></th>
                      <td><?php echo $users['u_id']?></td>
                      <td><?php echo $users['u_name']?></td>
-                      <td>Basic</td>
+                     <td><?php echo $user['email']?></td>
+                      <td><?php echo $user['plan']?></td>
                     <td><?php echo $users['u_status']?></td>
 
                     <td>
-         <button type="button" class="btn btn-primary btn-view" data-bs-toggle="modal" data-bs-target="#modalview" data-bs-whatever="@mdo">View</button>
-
-         <button type="button" class="btn btn-primary btn-edit"
-         data-bs-toggle="modal" data-bs-target="#editmodal" data-bs-whatever="@mdo">Edit</button>
-
-         <button type="button" class="btn btn-primary btn-delete">Delete</button>
+        <div class="edit-button"><a href="updateUser.php?<?php echo $users['u_id']?>" >Edit</a></div>
                 </td>
+
+                <td><button type="button" class="btn btn-primary btn-delete">Delete</button></td>
               </tr>
               
               <?php endforeach ?>
       
             </tbody>
           </table>
-           
-          <!-- view modal -->
-          <div class="modal fade" id="modalview" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h1 class="modal-title fs-5" id="exampleModalLabel">User Information</h1>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-
-
-                <div class="modal-body">
-                  <form class="user-info">
-                    
-                    <div class="mb-3">
-
-                      <p><b>Name</b></p>
-                      <p><span>Angel Canete</span></p>
-                    <hr>
-                      <p><b>Email Address</b></p>
-                      <p><span>caneteangel187</span></p>
-                    <hr>
-                      <p><b>Username</b></p>
-                      <p><span>angelcanete</span></p>
-                    <hr>
-                      <p><b>Subscription Plan</b></p>
-                      <p><span>Basic</span></p>
-                    </div>
-
-                  </form>
-                </div>
-
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                  
-                </div>
-              </div>
-            </div>
-          </div>
-
-            <!-- edit modal -->
-
-            <div class="modal fade" id="editmodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                    
-                    <div class="modal-header">
-                      <h1 class="modal-title fs-5" id="exampleModalLabel">Update User Account</h1>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-
-                    <div class="modal-body">
-                      <form>
-                        <div class="mb-3">
-                          <label for="name" class="col-form-label">Name:</label>
-                          <input type="text" class="form-control" id="name">
-                        </div>
-
-                        <div class="mb-3">
-                          <label for="email" class="col-form-label">Email:</label>
-                          <input type="text" class="form-control" id="email">
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="username" class="col-form-label">Username:</label>
-                            <input type="text" class="form-control" id="username">
-                          </div>
-  
-
-                      </form>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                      <button type="button" class="btn btn-primary">Save Changes</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
+          
 <!-- end of manage user -->
         </div>
 

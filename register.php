@@ -9,6 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     // Define account type and status
     $accType = 'User';
     $accStatus = 'Pending';
+    $accPlan='Basic';
 
     // Get data from form fields
     $name = $_POST['name'];
@@ -20,13 +21,14 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
     // Insert user data into the database
-    $statement = $conn->prepare("INSERT INTO accounts (u_name, email, username, password, u_type, u_status) VALUES (:name, :email, :username, :hashed_password, :accType, :accStatus)");
+    $statement = $conn->prepare("INSERT INTO accounts (u_name, email, username, password, u_type, u_status) VALUES (:name, :email, :username, :hashed_password, :accType, :accPlan,:accStatus)");
 
     $statement->bindValue(':name', $name);
     $statement->bindValue(':email', $email);
     $statement->bindValue(':username', $username);
     $statement->bindValue(':hashed_password', $hashed_password);
     $statement->bindValue(':accType', $accType);
+    $statement->bindValue(':accPlan', $accPlan);
     $statement->bindValue(':accStatus', $accStatus);
 
     $result = $statement->execute();

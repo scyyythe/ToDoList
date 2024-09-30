@@ -1,0 +1,138 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+*{
+    margin: 0;
+    padding: 0;
+    font-family: Poppins;
+    box-sizing: border-box;
+}
+
+.wrapper{
+    position: absolute;
+    top: 0;
+    left: 250px;
+    float: right;
+    width: 1500px;
+    padding: 20px;
+
+}
+
+aside{
+    color: white;
+    padding: 30px;
+    max-width: 250px;
+    height: 100vh;
+    background-color: #210950;
+   
+}
+
+header{ 
+    margin-block:20px;
+
+    h1{
+        text-align: center;
+    }
+}
+
+aside ul,li,a{
+    color: white;
+    text-decoration: none;
+    list-style: none;
+    line-height: 4;
+    text-align: center;
+
+    a:hover{
+        color: red;
+    }
+}
+
+.go-pro{
+    color: black;
+    position: relative;
+    top: 10%;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #e5e0e0;
+    button{
+        margin-top: 20px;
+        padding: 10px;
+        width: 120px;
+        background-color: goldenrod;
+        border-style: none;
+        border-radius: 10px;
+    }
+    
+    img{
+        max-width: 150px;
+    }
+}
+
+/* userdashboard*/
+
+.top-dashboard{
+    max-width: 1500px;
+    padding: 4rem;
+    border-radius: 20px;
+    margin-block: 2rem;
+    height: 250px;
+    display: flex;
+    align-items: center;
+    background-color: #a099d4;
+}
+
+.left-dash{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.right-dash{
+
+    position: relative;
+    left: 50%;
+    bottom: 50%;
+}
+
+/* below dash */
+.count{
+  
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    
+    span{
+        font-family: 'Times New Roman', Times, serif;
+        margin-inline: 20px;
+        font-weight: 500;
+        font-size: 30px;
+    }
+}
+
+.count-pending-task{
+    border-radius: 10px;
+    padding: 20px;
+    background-color: #ffde59;
+    width: 45%;
+    margin-block: 20px;
+}
+
+.count-completed-task{
+    border-radius: 10px;
+    padding: 20px;
+    background-color: #c1ff72;
+    width: 45%;
+}
+
+/* dashboard list*/
+.dash-list{
+    display: flex;
+    justify-content: space-between;
+    padding: 2rem;
+    border-radius: 10px;
+    background-color: #e5e0e0;
+}
+
+.right-dash-list{
+     text-align: right;
+}
