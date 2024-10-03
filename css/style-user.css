@@ -8,55 +8,64 @@
 }
 
 .wrapper{
-    position: absolute;
-    top: 0;
-    left: 250px;
-    float: right;
-    width: 1500px;
-    padding: 20px;
-
+    max-width: 1900px;
+    padding: 1rem;
+    margin-inline: auto;
 }
 
-aside{
-    color: white;
-    padding: 30px;
-    max-width: 250px;
-    height: 100vh;
-    background-color: #210950;
-   
-}
 
-header{ 
-    margin-block:20px;
-
-    h1{
-        text-align: center;
+header{    
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    z-index: 1;
+    h3{
+        margin-left: 20px;
+        color:rgb(38, 3, 102) ;
     }
 }
 
-aside ul,li,a{
-    color: white;
+header ul, li, a {
+    font-size: .8rem;
+    margin-inline: 20px;
+    display: flex;
+    flex-direction: row;
     text-decoration: none;
     list-style: none;
     line-height: 4;
     text-align: center;
+    z-index: 5;
+    position: relative; 
+}
 
-    a:hover{
-        color: red;
-    }
+header ul li a::after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 2px; 
+    background-color: rgb(52, 4, 105); 
+    bottom: 8px; 
+    left: 0;
+    transition: width .5s ease; 
+}
+
+header ul li a:hover::after {
+    width: 100%; 
 }
 
 .go-pro{
+    width: 100%;
     color: black;
     position: relative;
     top: 10%;
     padding: 20px;
     border-radius: 10px;
     background-color: #e5e0e0;
+
     button{
         margin-top: 20px;
         padding: 10px;
-        width: 120px;
+        width: 100px;
         background-color: goldenrod;
         border-style: none;
         border-radius: 10px;
@@ -65,19 +74,27 @@ aside ul,li,a{
     img{
         max-width: 150px;
     }
+
+    p{
+        font-size: 10px;
+    }
 }
 
 /* userdashboard*/
-
+#dashboard p{
+    font-size: 12px;
+}
 .top-dashboard{
-    max-width: 1500px;
-    padding: 4rem;
+    width: 100%;
+    padding: 2rem;
     border-radius: 20px;
-    margin-block: 2rem;
-    height: 250px;
+    margin-block: 1rem;
+    height: 150px;
     display: flex;
     align-items: center;
     background-color: #a099d4;
+
+    
 }
 
 .left-dash{
@@ -88,15 +105,21 @@ aside ul,li,a{
 }
 
 .right-dash{
-
     position: relative;
-    left: 50%;
+    left: 60%;
     bottom: 50%;
+    width: 20%;
+    height: auto;
+
+    img{
+        max-width: 100%;
+    }
 }
 
 /* below dash */
 .count{
   
+    width: 100%;
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -104,14 +127,14 @@ aside ul,li,a{
     span{
         font-family: 'Times New Roman', Times, serif;
         margin-inline: 20px;
-        font-weight: 500;
+        font-weight: 800;
         font-size: 30px;
     }
 }
 
 .count-pending-task{
     border-radius: 10px;
-    padding: 20px;
+    padding: 15px;
     background-color: #ffde59;
     width: 45%;
     margin-block: 20px;
@@ -119,7 +142,7 @@ aside ul,li,a{
 
 .count-completed-task{
     border-radius: 10px;
-    padding: 20px;
+    padding: 15px;
     background-color: #c1ff72;
     width: 45%;
 }
@@ -128,11 +151,102 @@ aside ul,li,a{
 .dash-list{
     display: flex;
     justify-content: space-between;
-    padding: 2rem;
+    padding: 1rem;
     border-radius: 10px;
     background-color: #e5e0e0;
+    font-size: .8rem;
+    margin-block: 10px;
 }
-
+.left-dash-list{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
 .right-dash-list{
+    display: flex;
+    align-items: center;
      text-align: right;
 }
+
+
+/* my task section */
+#my-task{
+    display: flex;
+    flex-wrap: wrap;
+  
+}
+
+.head-mytask{
+
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    display: flex;
+
+    p{
+        font-size: 12px;
+    }
+}
+
+.tab-container {
+    max-width: 100%;
+    border-radius: 5px; 
+    
+}
+
+.tabs {
+    display: flex;
+    border-bottom: 1px solid #ccc;
+}
+
+.tab-button {
+    flex: 1;
+    padding: 10px; 
+    border: none; 
+    cursor: pointer; 
+    transition: background-color 0.3s; /
+}
+
+.tab-button.active {
+    border-bottom: 2px solid rgb(38, 3, 102)  ;
+    font-weight: bold;
+}
+
+.tab-button:hover {
+    background-color: #f0f0f0; 
+}
+
+.tab-content {
+    padding: 15px;
+}
+
+.tab-pane {
+    display: none; 
+}
+
+.tab-pane.active {
+    display: block; 
+}
+
+
+.left-tab{
+   
+    width: 50%;
+
+    input{
+        border: solid 1px gray;
+        padding: 5px;
+        width:40%;
+        border-radius: 20px;
+        padding: 5px;
+        font-size: 12px;
+    }
+
+    textarea{
+        width: 50%;
+        resize: none;
+        padding: 5px;
+        border-radius: 5px;
+    }
+}
+

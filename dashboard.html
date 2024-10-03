@@ -7,79 +7,103 @@
     <title>ToDo</title>
 </head>
 <body>
-    
-    <aside>
-        <header>
-            <h1>ToDo</h1>
-        </header>
-        
+    <header>
+        <h3>ToDo</h3>
         <ul>
-            <li><a href="">Dashboard</a></li>
-            <li><a href="">My Task</a></li>
-            <li><a href="">Settings</a></li>
-            <li><a href="">Settings</a></li>
-            <li><a href="">Sign Out</a></li>
+            <li><a href="#" id="dashboard-link">Dashboard</a></li>
+            <li><a href="#" id="my-task-link">My Task</a></li>
+            <li><a href="#" id="settings-link">Settings</a></li>
+            <li><a href="#">Sign Out</a></li>
         </ul>
+    </header>
 
-        <div class="go-pro">
-            <h3>Go Pro</h3>
-            <p>"Unlock your full potential with Pro – more features, more productivity!"</p>
-            <button>Upgrade</button>
-            <img src="img/pro-image.png" alt="">
-        </div>
-    </aside>
-    
     <div class="wrapper">
-        <h1>Dashboard</h1>
-        <p>Monday 02 September 2024</p>
-
-        <div class="top-dashboard">
-
-            <div class="left-dash">
-                <h1>Hi, Jamaica</h1>
-                <p>Ready to start your day with ToDo?</p>
+        <section id="dashboard">
+            <p>Monday 02 September 2024</p>
+            <div class="top-dashboard">
+                <div class="left-dash">
+                    <h1>Hi, Jamaica</h1>
+                    <p>Ready to start your day with ToDo?</p>
+                </div>
+                <div class="right-dash">
+                    <img src="img/image1.png" alt="">
+                </div>
             </div>
+            <div class="below-dash">
+                <p><b>Overview</b></p>
+                <div class="count">
+                    <div class="count-pending-task">
+                        <p><span>5</span> Pending</p>
+                    </div>
+                    <div class="count-completed-task">
+                        <p><span>5</span> Completed</p>
+                    </div>
+                </div>
+                <div class="dash-list">
+                    <div class="left-dash-list">
+                        <h3>Performance Task Photoshop</h3><br>
+                        <p>Submit raw, png, and psd file in google classroom.</p>
+                    </div>
+                    <div class="right-dash-list">
+                        <p>Due Date: September 30, 2024</p><br>
+                        <a href="" class="edit-list"><b>Edit List</b></a>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-            <div class="right-dash">
-                <img src="img/image1.png" alt="">
+        <section id="my-task" style="display: none;">
+
+            <div class="head-mytask">
+                <h3>To Do List</h3>
+            <p>September 30, 2024</p>
             </div>
             
-        </div>
-
-        <div class="below-dash">
-
-            <!-- overview -->
-            <p><b>Overview</b></p>
-
-            <div class="count">
-                <div class="count-pending-task">
-                    <p><span>5</span>Pending</p>
-                  
+            <div class="tab-container">
+                <div class="tabs">
+                    <button class="tab-button active" id="tab1-button">My Task</button>
+                    <button class="tab-button" id="tab2-button">My Folders</button>
                 </div>
 
-                <div class="count-completed-task">
-                    <p><span>5</span>Completed</p>
-                   
+
+                <div class="tab-content">
+                    <div class="tab-pane active" id="tab1-content">
+                        <p><b>New List</b></p><br>
+
+                        <div class="inside-tab-pane">
+
+                            <div class="left-tab">
+                                  <label for="title">Title</label><br>
+                                <input type="text" placeholder="Title"><br>
+
+                                <label for="note">Note</label><br>
+                                <textarea name="to-do-note" id="to-do-note"></textarea>
+                            </div>
+                          
+
+                            <div class="right-tab">
+                                <label for="image-note">Upload Image</label><br>
+                                <input type="file" placeholder="Choose a File">
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="tab-pane" id="tab2-content">
+                        <h2>Content for Tab 2</h2>
+                        <p>This is the content for the second tab.</p>
+                    </div>
                 </div>
             </div>
+        </section>
 
 
-            <!-- sample -->
-             <div class="dash-list">
-                <div class="left-dash-list">
-                    <h3>Performace Task Photoshop</h3><br>
-                    <p>Submit raw, png and psd file in google classroom.</p>
-                </div>
-
-                <div class="right-dash-list">
-                    <p>Due Date: September 30, 2024</p><br>
-                    <p><b>Edit List</b></p>
-
-                </div>
-             </div>
-
-             
-        </div>
+        <section id="settings" style="display: none;">
+            <h1>this is settings</h1>
+        </section>
     </div>
+
+    <script src="js/dashboard.js">
+        
+    </script>
 </body>
 </html>
