@@ -268,7 +268,7 @@ header ul li a:hover::after {
 .left-tab{
     padding: 1rem;
     width: 45%;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, .5);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, .1);
 
     input{
         margin-block: 5px;
@@ -309,7 +309,7 @@ header ul li a:hover::after {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, .5);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, .1);
 
     input{
         padding: 5px;
@@ -349,7 +349,6 @@ header ul li a:hover::after {
     width: 80%;
     padding: 2rem;
     background-color: #fff;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     z-index: 1000;
     border-radius: 8px;
 }
@@ -472,3 +471,4 @@ body.show-popup {
     cursor: pointer;
 }
 
+/* tab 2 css MY FOLDERS */
