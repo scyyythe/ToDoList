@@ -166,9 +166,36 @@ header ul li a:hover::after {
     display: flex;
     align-items: center;
      text-align: right;
+
+     a:hover{
+        cursor: pointer;
+        color: red;
+        text-decoration: underline;
+     }
+   
+
 }
 
+.bx-check-circle{
+    font-size: 1.3rem;
+    margin-inline: 10px;
+    color: green;
+}
+.bx-check-circle:hover{
+    cursor: pointer;
+    background-color: green;
+    color: white;
+    border-radius: 50%;
+}
+.bxs-trash{
+    color:rgb(38, 3, 102) ;
+    font-size: 1.5rem;
+}
 
+.bxs-trash:hover{
+    color: red;
+
+}
 /* my task section */
 #my-task{
     display: flex;
@@ -191,7 +218,7 @@ header ul li a:hover::after {
 .tab-container {
     max-width: 100%;
     border-radius: 5px; 
-    
+    max-height: 1000px;
 }
 
 .tabs {
@@ -228,25 +255,220 @@ header ul li a:hover::after {
     display: block; 
 }
 
-
+.inside-tab-pane{
+ 
+    display: flex;
+    justify-content: space-between;
+    margin-bottom:1rem;
+    label{
+            font-size: 15px;
+            margin-block:5px;
+        }
+}
 .left-tab{
-   
-    width: 50%;
+    padding: 1rem;
+    width: 45%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, .5);
 
     input{
+        margin-block: 5px;
         border: solid 1px gray;
         padding: 5px;
         width:40%;
         border-radius: 20px;
         padding: 5px;
-        font-size: 12px;
+        border: solid 1px gray;
     }
 
     textarea{
-        width: 50%;
+        width: 80%;
         resize: none;
         padding: 5px;
         border-radius: 5px;
     }
+
+    button{
+        padding: 5px;
+        width: 30%;
+        margin-block: 10px;
+        border-radius: 20px;
+        border-style: none;
+        background-color:#210950;
+        color: white;
+    }
+
+    button:hover{
+        cursor: pointer;
+        background-color: #210950e5;
+    }
+}
+
+.right-tab{
+    padding: 1rem;
+    width: 50%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, .5);
+
+    input{
+        padding: 5px;
+        margin-block: 5px;
+        border: solid 1px gray;
+        border-radius: 5px;
+    }
+}
+
+.display-image{
+    float: right;
+    height: 200px;
+
+    img{
+        max-width: 100%;
+        position: relative;
+        bottom: 60px;
+        height: 300px;
+    }
+}
+/* very bottom sa My Task tab */
+.tab1-below-list{
+  
+    height: 100%;
+}
+.tab1-head-list{
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+#completed-task {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    padding: 2rem;
+    background-color: #fff;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    border-radius: 8px;
+}
+
+.completed-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.completed-header a {
+    color: red;
+    cursor: pointer;
+}
+
+body.show-popup {
+    overflow: hidden; 
+}
+
+/* view all task css */
+.head-viewtastContainer{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    p{
+        font-size: 13px;
+    }
+}
+.all-task-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px; 
+    padding: 20px;
+    background-color: #f9f9f9; 
+}
+
+.task-box {
+    position: relative; 
+    display: flex;
+    flex-direction: column; 
+    justify-content: space-between;
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1),
+                5px 5px 10px rgba(0, 0, 0, 0.05); 
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.task-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2), 
+                5px 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.task-box-top {
+    margin-bottom: 15px; 
+    position: relative; 
+    h3 {
+       font-size: 1rem;
+    }
+    p {
+        margin-top: 20px;
+        font-size: 13px;
+    }
+}
+
+.task-box-top i {
+    position: relative;
+    left: 92%;
+    font-size: 20px; 
+    color: green;
+}
+.task-box-top i:hover{
+    cursor: pointer;
+    border: 1px solid;
+    border-radius: 50%;
+    background-color: green;
+    color: white;
+}
+
+.task-box-bottom {
+    font-size: .8rem;
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; 
+    align-items: center;
+}
+
+.task-actions {
+    position: relative;
+    right: 10px;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+}
+.task-actions i:hover{
+    cursor: pointer;
+    color: red;
+}
+.task-due {
+    position: relative;
+    right: 20px;
+}
+
+.edit-task {
+    color:rgb(38, 3, 102) ;
+    text-decoration: none;
+}
+
+.edit-task:hover {
+    text-decoration: underline;
+}
+
+.bxs-trash {
+    font-size: 1rem; 
+    cursor: pointer;
 }
 
