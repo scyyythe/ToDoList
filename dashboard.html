@@ -191,7 +191,25 @@
 
                     <!-- tab 2 -->
                     <div class="tab-pane" id="tab2-content">
-                        <p>You need to go Pro</p>
+       
+                        <!-- Folder Section -->
+                            <div class="folder-section" \">
+                                <h3>Folders</h3>
+                                <ul id="folder-list"></ul>
+                                <input type="text" id="new-folder" placeholder="New Folder Name">
+                                <button id="add-folder-btn">Add Folder</button>
+                            </div>
+
+                            <!-- Task Section -->
+                            <div class="task-section">
+                                <h3>Tasks</h3>
+                                <div id="task-area" style="display: none;">
+                                    <h3 id="selected-folder-title"></h3>
+                                    <ul id="task-list"></ul>
+                                    <input type="text" id="new-task" placeholder="New Task">
+                                    <button id="add-task-btn">Add Task</button>
+                                </div>
+                            </di>
                     </div>
                 </div>
             </div>
@@ -250,7 +268,45 @@
         </section>
 
         <section id="settings" style="display: none;">
+            <h3>Account Information</h3>
+
+            <div class="settings-information">
             
+                <label for="name">Name</label><br>
+                <input type="text" value="Jamaica Anuba"><br>
+
+                <label for="email">Email</label><br>
+                <input type="text" value="anubajamaiva@gmail.com"><br>
+
+                <label for="username">Username</label><br>
+                <input type="text" value="jaijai"><br>
+
+                <label for="password">Password</label><br>
+                <input type="password"><br><br>
+
+                <button>Edit Profile</button>
+            </div>
+            
+            <div class="settings-right">
+                <p>Account Status: <span><b>Basic</b></span></p>
+
+                <div class="upgrade-plan-container">
+                    <h3>Upgrade your plan</h3>
+                    <p>Get the right plan to you list</p>
+
+                    <h5>Premium Plan</h5>
+                    <p><span>P100</span></p>
+                    
+                    <ul>
+                        <li>Set Deadlines (Date & Time)</li>
+                        <li>Upload Images to you list</li>
+                        <li>Create Folders to organize lis</li>
+                    </ul>
+
+                    <button onclick="window.location.href='payment.html'">Get Plan</button>
+
+                </div>
+            </div>
         </section>
     </div>
 

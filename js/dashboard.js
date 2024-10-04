@@ -78,3 +78,86 @@ allTaskLink.addEventListener('click', function() {
     settingsSection.style.display = 'none'; 
     alltaskSection.style.display = 'block'; 
 });
+
+
+// tab 2 folder
+document.addEventListener("DOMContentLoaded", function() {
+    const folderList = document.getElementById('folder-list');
+    const taskList = document.getElementById('task-list');
+    const newFolderInput = document.getElementById('new-folder');
+    const addFolderBtn = document.getElementById('add-folder-btn');
+    const newTaskInput = document.getElementById('new-task');
+    const addTaskBtn = document.getElementById('add-task-btn');
+    const selectedFolderTitle = document.getElementById('selected-folder-title');
+    const taskArea = document.getElementById('task-area');
+    let selectedFolder = null;
+
+    // Function to add a new folder
+    addFolderBtn.addEventListener('click', function() {
+        const folderName = newFolderInput.value.trim();
+        if (folderName) {
+            const folderItem = document.createElement('li');
+            const folderText = document.createElement('span');
+            folderText.textContent = folderName;
+
+            // Delete button for folder
+            const deleteFolderBtn = document.createElement('button');
+            deleteFolderBtn.textContent = 'Delete';
+            deleteFolderBtn.classList.add('delete-btn');
+            deleteFolderBtn.addEventListener('click', function() {
+                folderItem.remove();
+                taskArea.style.display = 'none'; 
+            });
+
+            folderItem.appendChild(folderText);
+            folderItem.appendChild(deleteFolderBtn);
+
+            folderItem.addEventListener('click', function() {
+                openFolder(folderName);
+            });
+
+            folderList.appendChild(folderItem);
+            newFolderInput.value = '';
+        }
+    });
+
+    // Function to open a folder and display tasks
+    function openFolder(folderName) {
+        selectedFolder = folderName;
+        selectedFolderTitle.textContent = `Tasks in: ${folderName}`;
+        taskArea.style.display = 'block';
+        taskList.innerHTML = '';  // Clear tasks when opening a new folder
+    }
+
+    // Function to add a task to the selected folder
+    addTaskBtn.addEventListener('click', function() {
+        const taskName = newTaskInput.value.trim();
+        if (taskName && selectedFolder) {
+            const taskItem = document.createElement('li');
+            const taskText = document.createElement('span');
+            taskText.textContent = taskName;
+
+            // Complete button for task
+            const completeTaskBtn = document.createElement('button');
+            completeTaskBtn.textContent = 'Complete';
+            completeTaskBtn.classList.add('complete-btn');
+            completeTaskBtn.addEventListener('click', function() {
+                taskItem.classList.toggle('completed'); // Mark task as completed
+            });
+
+            // Delete button for task
+            const deleteTaskBtn = document.createElement('button');
+            deleteTaskBtn.textContent = 'Delete';
+            deleteTaskBtn.classList.add('delete-btn');
+            deleteTaskBtn.addEventListener('click', function() {
+                taskItem.remove();
+            });
+
+            taskItem.appendChild(taskText);
+            taskItem.appendChild(completeTaskBtn);
+            taskItem.appendChild(deleteTaskBtn);
+            taskList.appendChild(taskItem);
+            newTaskInput.value = '';
+        }
+    });
+});

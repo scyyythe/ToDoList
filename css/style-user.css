@@ -472,3 +472,171 @@ body.show-popup {
 }
 
 /* tab 2 css MY FOLDERS */
+#tab2-content{
+    display: flex;
+    justify-content: space-between;
+}
+.task-section{
+    width: 55%;
+}
+
+.folder-section{
+    width: 40%;
+}
+.folder-section, .task-section {
+
+    background-color: #fff;
+     margin-top: 20px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+    ul {
+        list-style-type: none;
+        padding: 0;
+    }
+    
+    li {
+        margin: 5px 0;
+        padding: 10px;
+        background-color: #eee;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+    
+    li:hover {
+        background-color: #ddd;
+    }
+    
+    input {
+        padding: 10px;
+        width: calc(100% - 100px);
+        margin-right: 10px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+    }
+    
+    button {
+        padding: 5px;
+        border-radius: 20px;
+        border-style: none;
+        font-size: 13px;
+        color: black;
+        margin-top: 10px;
+    }
+    
+    button:hover {
+        
+        cursor: pointer;
+    }
+}
+
+#selected-folder-title {
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.delete-btn {
+    color: white;
+    border: none;
+    border-style: none;
+    cursor: pointer;
+    float: right;
+}
+
+.complete-btn {
+ 
+    position: relative;
+    left: 75%;
+    width: 200px;
+}
+
+.delete-btn {
+ 
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 75%;
+    font-size: 0.8rem;
+     width: 200px;
+}
+
+/* settings css */
+
+.settings-information{
+    width: 30%;
+    padding: 20px;
+    border-radius: 20px;
+    line-height: 2;
+
+
+    label{
+      
+        font-size: 13px;
+        
+    }
+
+    input{
+        width: 80%;
+        padding:5px;
+        border-radius: 10px;
+        border-style: none;
+        background-color: #e5e0e0;
+        font-size: 13px;
+    }
+
+    button{
+        padding: 5px;
+        border-radius: 20px;
+        border-style: none;
+        font-size: 13px;
+        width: 100px;
+        background-color:rgb(38, 3, 102);
+        color: white;
+    }
+}
+.settings-right{
+ 
+    width: 50%;
+    float: right;
+    position: relative;
+    bottom: 400px;
+    
+    p{
+        font-size: 13px;
+      
+    }
+
+    span{
+        color: green;
+    }
+}
+
+.upgrade-plan-container{
+    width: 60%;
+    margin-top: 1rem;
+    text-align: left;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+
+    span{
+        font-weight: 800;
+        font-size: 3rem;
+    }
+
+    button{
+        border-style: none;
+        padding: 5px;
+        border-radius: 20px;
+        width: 200px;
+        background-color: #ffde59;
+    }
+
+    button:hover{
+        cursor: pointer;
+        background-color: #ffe168;
+    }
+}
+
+/* payment */
