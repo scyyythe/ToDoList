@@ -13,7 +13,7 @@
         <h3>ToDo</h3>
         <ul>
             <li><a href="#" id="dashboard-link">Dashboard</a></li>
-            <li><a href="#" id="my-task-link">My Task</a></li>
+            <li><a href="#" id="my-task-link">My List</a></li>
             <li><a href="#" id="settings-link">Settings</a></li>
             <li><a href="#">Sign Out</a></li>
         </ul>
@@ -21,7 +21,8 @@
 
     <div class="wrapper">
         <section id="dashboard">
-            <p>Monday 02 September 2024</p>
+            <p id="live-date"></p>
+
             <div class="top-dashboard">
                 <div class="left-dash">
                     <h1>Hi, Jamaica</h1>
@@ -60,19 +61,19 @@
 
             <div class="head-mytask">
                 <h3>To Do List</h3>
-            <p>September 30, 2024</p>
+                <p id="live-date-mytask"></p>
             </div>
             
             <div class="tab-container">
                 <div class="tabs">
-                    <button class="tab-button active" id="tab1-button">My Task</button>
+                    <button class="tab-button active" id="tab1-button">Things To Do</button>
                     <button class="tab-button" id="tab2-button">My Folders</button>
                 </div>
 
 
                 <div class="tab-content">
                     <div class="tab-pane active" id="tab1-content">
-                        <p><b>New List</b></p><br>
+                        <p><b>New List</b></p>
                         
                         <div class="inside-tab-pane">
 
@@ -91,7 +92,7 @@
                                 </form>
                                  
                             </div>
-                          
+<!--                           
 
                             <div class="right-tab">
 
@@ -114,7 +115,7 @@
                                 <div class="display-image">
                                     <img src="img/image1.png" alt="">
                                 </div>
-                            </div>
+                            </div> -->
 
                             
                         </div>
@@ -192,7 +193,7 @@
 
                     <!-- tab 2 -->
                     <div class="tab-pane" id="tab2-content">                     
-                            <!-- Folder creation section -->
+                     
                         <section id="folder-section">
                             <h4>Organize your list!</h4><br>
                             <h5>Create New Folder</h5>
@@ -202,13 +203,13 @@
                             </div>
                             <hr />
                         
-                            <!-- Folder container where new folders will be added -->
+                          
                             <div class="folders-container" id="folders-container">
-                            <!-- Only dynamically created folders will appear here -->
+                            <!-- created folders will appear here -->
                             </div>
                         </section>
                         
-                       <!-- Folder content (task list) section -->
+                     
                 <section id="folder-content" style="display:none;">
                     <div class="folder-header">
                     <button id="back-btn">&larr; Back to Folders</button>
@@ -217,23 +218,21 @@
       
                     <hr />
                     <div id="add-task-form">
-
                         <div class="right-task-form">
+                            <input type="text" id="task-title" placeholder="Note Title" required />
+                            <input type="text" id="task-description" placeholder="Note Description" required />
+                        </div>
                         
-                            <input type="text" id="task-title" placeholder="Note Title" />
-                        <input type="text" id="task-description" placeholder="Note Description" />
-                        </div>
-                    
                         <div class="due-date-task-form">
-                            <label for="due-date-folder">Deadline</la><br>
-                             <input type="date" id="task-due-date" name="due-date-folder" placeholder="Due Date" /><br>
-                             <label for="image-note">Upload Image</la><br>
-                             <input type="file" placeholder="Choose a File"><br>
-                            
+                            <label for="due-date-folder">Deadline</label><br>
+                            <input type="date" id="task-due-date" name="due-date-folder" placeholder="Due Date" required /><br>
+                            <label for="image-note">Upload Image</label><br>
+                            <input type="file" id="task-image" accept="image/*"><br>
                         </div>
-                             <button id="add-task-btn">Add Task</button>
+                        
+                        <button id="add-task-btn">Add Task</button>
                     </div>
-                
+                    
                     <hr />
                 
                     
@@ -290,14 +289,15 @@
                         </div>
                     </div>
                 </div>
-                
-
-                
+                             
             
             </div>
             
         </section>
 
+
+
+        <!-- settingss  -->
         <section id="settings" style="display: none;">
             <h3>Account Information</h3>
 
@@ -320,25 +320,26 @@
             
             <div class="settings-right">
                 <p>Account Status: <span><b>Basic</b></span></p>
-
+            
                 <div class="upgrade-plan-container">
                     <h3>Upgrade your plan</h3>
-                    <p>Get the right plan to you list</p>
-
+                    <p>Get the right plan for your list</p>
+            
                     <h5>Premium Plan</h5>
                     <p><span>P100</span></p>
                     
                     <ul>
                         <li>Set Deadlines (Date & Time)</li>
-                        <li>Upload Images to you list</li>
-                        <li>Create Folders to organize lis</li>
+                        <li>Upload Images to your list</li>
+                        <li>Create Folders to organize lists</li>
                     </ul>
-
+            
                     <button onclick="window.location.href='payment.html'">Get Plan</button>
-
                 </div>
             </div>
+            
         </section>
+        
     </div>
 
     <script src="js/dashboard.js">

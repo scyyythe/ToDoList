@@ -275,10 +275,11 @@ header ul li a:hover::after {
         }
 }
 .left-tab{
-    padding: 1rem;
-    width: 45%;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, .1);
 
+    padding: 1rem;
+    width: 100%;
+    box-shadow: 0 0 8px rgba(0, 0, 0, .1);
+    height: 200px;
     input{
         margin-block: 5px;
         border: solid 1px gray;
@@ -298,12 +299,14 @@ header ul li a:hover::after {
 
     button{
         padding: 5px;
-        width: 30%;
-        margin-block: 10px;
+        width: 15%;
         border-radius: 20px;
         border-style: none;
         background-color:#210950;
         color: white;
+        position: relative;
+        bottom: 140px;
+        left: 80%;
     }
 
     button:hover{
@@ -489,6 +492,7 @@ body.show-popup {
 #folder-section {
     font-family: Arial, sans-serif;
     padding: 20px;
+
   }
 
   .add-folder {
@@ -548,7 +552,7 @@ body.show-popup {
   /* Folder content (task list)*/
   #folder-content {
 
-    width: 1200px;
+    max-width: 1500px;
     padding: 20px;
     display: none;
   }
@@ -570,7 +574,7 @@ body.show-popup {
     color: red;
     border: none;
     background: none;
-    font-size: 16px;
+    font-size: 13px;
     cursor: pointer;
   }
 
@@ -651,12 +655,18 @@ body.show-popup {
   }
   #add-task-btn {
     padding: 10px;
-    background-color: #5c3dff;
+    background-color: #210950;
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 20px;
     cursor: pointer;
     align-self: flex-start;
+    font-size: 12px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 150px;
   }
   
   #add-task-btn:hover {
@@ -719,7 +729,9 @@ body.show-popup {
     color: #d30b0b;
   }
 /* settings css */
-
+#settings{
+    overflow: hidden;
+}
 .settings-information{
     width: 30%;
     padding: 20px;
@@ -753,47 +765,74 @@ body.show-popup {
     }
 }
 .settings-right{
- 
     width: 50%;
     float: right;
     position: relative;
     bottom: 400px;
-    
-    p{
-        font-size: 13px;
-      
-    }
+}
 
-    span{
-        color: green;
-    }
+.settings-right p{
+    font-size: 14px;
+    color: #333;
+}
+
+.settings-right span{
+    color: green;
 }
 
 .upgrade-plan-container{
-    width: 60%;
+    width: 70%; 
     margin-top: 1rem;
     text-align: left;
     padding: 20px;
     border-radius: 20px;
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    background-color: #fff; 
+}
 
-    span{
-        font-weight: 800;
-        font-size: 3rem;
-    }
+.upgrade-plan-container span{
+    font-weight: 800;
+    font-size: 3rem;
+}
 
-    button{
-        border-style: none;
-        padding: 5px;
-        border-radius: 20px;
-        width: 200px;
-        background-color: #ffde59;
-    }
+.upgrade-plan-container ul{
+    list-style-type: none;
+    padding-left: 0;
+    line-height: 1.6em;
+}
 
-    button:hover{
-        cursor: pointer;
-        background-color: #ffe168;
-    }
+.upgrade-plan-container button{
+    border-style: none;
+    padding: 10px 15px; 
+    border-radius: 20px;
+    width: 200px;
+    background-color: #ffde59;
+    font-weight: bold; 
+    transition: background-color 0.3s ease;
+}
+
+.upgrade-plan-container button:hover{
+    cursor: pointer;
+    background-color: #ffe168;
+}
+.upgrade-plan-container ul{
+    list-style-type: none; 
+    padding-left: 0;
+    line-height: 1.6em; /
+}
+
+.upgrade-plan-container ul li{
+    position: relative;
+    padding-left: 25px; 
+}
+
+.upgrade-plan-container ul li::before{
+    content: '✔'; 
+    color: green; 
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: 0;
 }
 
 /* payment */
