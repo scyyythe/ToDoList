@@ -254,6 +254,15 @@ header ul li a:hover::after {
 .tab-pane.active {
     display: block; 
 }
+/* Hide Tab 2 content by default */
+#tab2-content {
+    display: none;
+}
+
+/* Make Tab 1 content visible by default */
+#tab1-content {
+    display: block;
+}
 
 .inside-tab-pane{
  
@@ -474,93 +483,241 @@ body.show-popup {
 /* tab 2 css MY FOLDERS */
 #tab2-content{
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
 }
-.task-section{
-    width: 55%;
-}
-
-.folder-section{
-    width: 40%;
-}
-.folder-section, .task-section {
-
-    background-color: #fff;
-     margin-top: 20px;
+#folder-section {
+    font-family: Arial, sans-serif;
     padding: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
 
-    ul {
-        list-style-type: none;
-        padding: 0;
-    }
-    
-    li {
-        margin: 5px 0;
-        padding: 10px;
-        background-color: #eee;
-        cursor: pointer;
-        border-radius: 5px;
-    }
-    
-    li:hover {
-        background-color: #ddd;
-    }
-    
-    input {
-        padding: 10px;
-        width: calc(100% - 100px);
-        margin-right: 10px;
-        border-radius: 5px;
-        border: 1px solid #ddd;
-    }
-    
-    button {
-        padding: 5px;
-        border-radius: 20px;
-        border-style: none;
-        font-size: 13px;
-        color: black;
-        margin-top: 10px;
-    }
-    
-    button:hover {
-        
-        cursor: pointer;
-    }
-}
-
-#selected-folder-title {
+  .add-folder {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     margin-bottom: 10px;
+  }
+
+  .add-folder input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    width: 300px;
+  }
+
+  .add-folder button {
+    padding: 10px 20px;
+    background-color: #4b0082;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    width: 100px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .add-folder button:hover {
+    background-color: #3a006b;
+  }
+
+  .folders-container {
+    display: flex;
+    gap: 20px;
+  }
+
+  .folder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  .folder img {
+    width: 80px;
+    height: 80px;
+  }
+
+  .folder p {
+    margin-top: 5px;
+    font-size: 14px;
+  }
+
+  /* Folder content (task list)*/
+  #folder-content {
+
+    width: 1200px;
+    padding: 20px;
+    display: none;
+  }
+
+  .folder-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  #back-btn {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+  }
+
+  #delete-folder-btn {
+    color: red;
+    border: none;
+    background: none;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .task-item {
+    background-color: #f0ecec;
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .task-info h4 {
+    margin: 0;
+  }
+
+  .task-meta {
+    text-align: right;
+  }
+
+  .edit-list-btn {
+    background: none;
+    border: none;
+    color: #4b0082;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  .edit-list-btn:hover {
+    text-decoration: underline;
+  }
+#add-task-form{
+
+    padding: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.right-task-form{
+    width: 50%;;
+}
+  #task-title{
+    padding: 5px;
+    width: 50%;
+    margin-block: 5px;
+    border: 1px solid #ccc;
+    border-radius: 15px;
+  }
+  #task-description{
+    width: 100%;
+    padding: 5px;
+    height: 50px;
+    margin-block: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+  }
+  .due-date-task-form{
+    width: 30%;
+
+    label{
+        font-size: 13px;
+    }
+    input{
+        width: 70%;
+        border-radius: 10px;
+        border:solid 1px #ccc;
+        padding: 3px;
+    }
+  }
+  #task-due-date{
+    border-radius: s;
+  }
+  #add-task-btn {
+    padding: 10px;
+    background-color: #5c3dff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    align-self: flex-start;
+  }
+  
+  #add-task-btn:hover {
+    background-color: #402cbb;
+  }
+  
+  /* Task List */
+  #task-list {
+    margin-top: 20px;
+  }
+  
+  .dash-list {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    background-color: #f1f1f1;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+  }
+  
+  .left-dash-list h3 {
+    margin-bottom: 5px;
+    font-size: 18px;
+  }
+  
+  .right-dash-list p {
+    margin: 0;
+    font-size: 14px;
+  }
+  
+  .right-dash-list a {
+    display: block;
+    margin-top: 5px;
+    color: #5c3dff;
+    text-decoration: none;
     font-weight: bold;
-}
-
-.delete-btn {
-    color: white;
-    border: none;
-    border-style: none;
+  }
+  
+  .right-dash-list a:hover {
+    text-decoration: underline;
+  }
+  
+  .bx-check-circle, .bxs-trash {
+    margin-left: 10px;
+    font-size: 20px;
+    color: #5c3dff;
     cursor: pointer;
-    float: right;
-}
-
-.complete-btn {
- 
-    position: relative;
-    left: 75%;
-    width: 200px;
-}
-
-.delete-btn {
- 
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-left: 75%;
-    font-size: 0.8rem;
-     width: 200px;
-}
-
+  }
+  
+  .bxs-trash {
+    color: #ff3d3d;
+  }
+  
+  .bx-check-circle:hover {
+    color: #3dbe5c;
+  }
+  
+  .bxs-trash:hover {
+    color: #d30b0b;
+  }
 /* settings css */
 
 .settings-information{

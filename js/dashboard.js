@@ -3,35 +3,10 @@ const dashboardLink = document.getElementById('dashboard-link');
 const myTaskLink = document.getElementById('my-task-link');
 const settingLink = document.getElementById('settings-link'); 
 
-
 const dashboardSection = document.getElementById('dashboard');
 const myTaskSection = document.getElementById('my-task');
 const settingsSection = document.getElementById('settings'); 
 
-// Add click event listeners to the links
-dashboardLink.addEventListener('click', function() {
-    dashboardSection.style.display = 'block';
-    myTaskSection.style.display = 'none';
-    settingsSection.style.display = 'none'; 
-    alltaskSection.style.display = 'none'; 
-});
-
-myTaskLink.addEventListener('click', function() {
-    dashboardSection.style.display = 'none';
-    myTaskSection.style.display = 'block';
-    settingsSection.style.display = 'none'; 
-    alltaskSection.style.display = 'none'; 
-});
-
-settingLink.addEventListener('click', function() {
-    dashboardSection.style.display = 'none';
-    myTaskSection.style.display = 'none';
-    settingsSection.style.display = 'block';
-    alltaskSection.style.display = 'none'; 
-});
-
-
-// tab pane
 // Get references to tab buttons and content
 const tab1Button = document.getElementById('tab1-button');
 const tab2Button = document.getElementById('tab2-button');
@@ -43,15 +18,44 @@ function switchTab(tab) {
     if (tab === 'tab1') {
         tab1Button.classList.add('active');
         tab2Button.classList.remove('active');
-        tab1Content.classList.add('active');
-        tab2Content.classList.remove('active');
+        tab1Content.style.display = 'block';
+        tab2Content.style.display = 'none'; // Hide Tab 2
     } else {
         tab1Button.classList.remove('active');
         tab2Button.classList.add('active');
-        tab1Content.classList.remove('active');
-        tab2Content.classList.add('active');
+        tab1Content.style.display = 'none';
+        tab2Content.style.display = 'block'; // Show Tab 2
     }
 }
+
+// Add event listeners to the tab buttons
+tab1Button.addEventListener('click', () => switchTab('tab1'));
+tab2Button.addEventListener('click', () => switchTab('tab2'));
+
+// Add click event listener to the "My Task" link
+myTaskLink.addEventListener('click', function() {
+    // Show "My Task" section and hide others
+    dashboardSection.style.display = 'none';
+    myTaskSection.style.display = 'block';
+    settingsSection.style.display = 'none';
+
+    // Automatically switch to Tab 1 and hide Tab 2 when "My Task" is clicked
+    switchTab('tab1');
+});
+
+// Add click event listeners to other sections
+dashboardLink.addEventListener('click', function() {
+    dashboardSection.style.display = 'block';
+    myTaskSection.style.display = 'none';
+    settingsSection.style.display = 'none';
+});
+
+settingLink.addEventListener('click', function() {
+    dashboardSection.style.display = 'none';
+    myTaskSection.style.display = 'none';
+    settingsSection.style.display = 'block';
+});
+
 
 // Add event listeners to the tab buttons
 tab1Button.addEventListener('click', () => switchTab('tab1'));
@@ -81,83 +85,124 @@ allTaskLink.addEventListener('click', function() {
 
 
 // tab 2 folder
-document.addEventListener("DOMContentLoaded", function() {
-    const folderList = document.getElementById('folder-list');
-    const taskList = document.getElementById('task-list');
-    const newFolderInput = document.getElementById('new-folder');
-    const addFolderBtn = document.getElementById('add-folder-btn');
-    const newTaskInput = document.getElementById('new-task');
-    const addTaskBtn = document.getElementById('add-task-btn');
-    const selectedFolderTitle = document.getElementById('selected-folder-title');
-    const taskArea = document.getElementById('task-area');
-    let selectedFolder = null;
 
-    // Function to add a new folder
-    addFolderBtn.addEventListener('click', function() {
-        const folderName = newFolderInput.value.trim();
-        if (folderName) {
-            const folderItem = document.createElement('li');
-            const folderText = document.createElement('span');
-            folderText.textContent = folderName;
+const folderTasks = {};
 
-            // Delete button for folder
-            const deleteFolderBtn = document.createElement('button');
-            deleteFolderBtn.textContent = 'Delete';
-            deleteFolderBtn.classList.add('delete-btn');
-            deleteFolderBtn.addEventListener('click', function() {
-                folderItem.remove();
-                taskArea.style.display = 'none'; 
-            });
+// Add folder functionality
+document.getElementById('add-folder-btn').addEventListener('click', function() {
+  const folderName = document.getElementById('folder-name').value;
+  if (folderName) {
+    const folderId = folderName.toLowerCase().replace(/\s+/g, '-'); // Generate ID from folder name
+    const folderContainer = document.createElement('div');
+    folderContainer.classList.add('folder');
+    folderContainer.setAttribute('data-folder-id', folderId); // Add unique folder ID
 
-            folderItem.appendChild(folderText);
-            folderItem.appendChild(deleteFolderBtn);
+    const folderIcon = document.createElement('img');
+    folderIcon.src = 'img/icons8-folder-64.png'; // Replace with your folder icon source
+    folderIcon.alt = folderName;
 
-            folderItem.addEventListener('click', function() {
-                openFolder(folderName);
-            });
+    const folderText = document.createElement('p');
+    folderText.innerText = folderName;
 
-            folderList.appendChild(folderItem);
-            newFolderInput.value = '';
-        }
-    });
+    folderContainer.appendChild(folderIcon);
+    folderContainer.appendChild(folderText);
 
-    // Function to open a folder and display tasks
-    function openFolder(folderName) {
-        selectedFolder = folderName;
-        selectedFolderTitle.textContent = `Tasks in: ${folderName}`;
-        taskArea.style.display = 'block';
-        taskList.innerHTML = '';  // Clear tasks when opening a new folder
-    }
+    // Append the new folder to the folders container
+    document.getElementById('folders-container').appendChild(folderContainer);
 
-    // Function to add a task to the selected folder
-    addTaskBtn.addEventListener('click', function() {
-        const taskName = newTaskInput.value.trim();
-        if (taskName && selectedFolder) {
-            const taskItem = document.createElement('li');
-            const taskText = document.createElement('span');
-            taskText.textContent = taskName;
+    // Initialize the folder's task list
+    folderTasks[folderId] = [];
 
-            // Complete button for task
-            const completeTaskBtn = document.createElement('button');
-            completeTaskBtn.textContent = 'Complete';
-            completeTaskBtn.classList.add('complete-btn');
-            completeTaskBtn.addEventListener('click', function() {
-                taskItem.classList.toggle('completed'); // Mark task as completed
-            });
-
-            // Delete button for task
-            const deleteTaskBtn = document.createElement('button');
-            deleteTaskBtn.textContent = 'Delete';
-            deleteTaskBtn.classList.add('delete-btn');
-            deleteTaskBtn.addEventListener('click', function() {
-                taskItem.remove();
-            });
-
-            taskItem.appendChild(taskText);
-            taskItem.appendChild(completeTaskBtn);
-            taskItem.appendChild(deleteTaskBtn);
-            taskList.appendChild(taskItem);
-            newTaskInput.value = '';
-        }
-    });
+    // Clear input field after adding folder
+    document.getElementById('folder-name').value = '';
+  }
 });
+
+// Event delegation: Handle clicks on folders
+document.getElementById('folders-container').addEventListener('click', function(event) {
+  const folder = event.target.closest('.folder'); // Find the clicked folder element
+  if (folder) {
+    const folderId = folder.getAttribute('data-folder-id');
+    showFolderTasks(folderId); // Show tasks for the clicked folder
+  }
+});
+
+// Show tasks based on folder ID
+function showFolderTasks(folderId) {
+  const taskListContainer = document.getElementById('task-list');
+  taskListContainer.innerHTML = ''; // Clear existing tasks
+
+  const tasks = folderTasks[folderId] || []; // Get tasks for the selected folder
+
+  tasks.forEach(task => {
+    const taskItem = document.createElement('div');
+    taskItem.classList.add('dash-list'); // Add the dash-list class to each task
+
+    // Left part (title and description)
+    const taskInfo = document.createElement('div');
+    taskInfo.classList.add('left-dash-list');
+    taskInfo.innerHTML = `<h3>${task.title}</h3><br><p>${task.description}</p>`;
+
+    // Right part (due date and actions)
+    const taskMeta = document.createElement('div');
+    taskMeta.classList.add('right-dash-list');
+    taskMeta.innerHTML = `
+      <p>Due Date: ${task.dueDate}</p><br>
+      <a href="#" class="edit-list"><b>Edit List</b></a>
+      <i class='bx bx-check-circle'></i>
+      <i class='bx bxs-trash'></i>
+    `;
+
+    taskItem.appendChild(taskInfo);
+    taskItem.appendChild(taskMeta);
+
+    taskListContainer.appendChild(taskItem); // Append each task to the task list container
+  });
+
+  // Show the add-task form for the current folder
+  document.getElementById('folder-content').setAttribute('data-current-folder', folderId);
+
+  // Hide folder view and show task list view
+  document.getElementById('folder-section').style.display = 'none';
+  document.getElementById('folder-content').style.display = 'block';
+}
+
+// Add task functionality
+document.getElementById('add-task-btn').addEventListener('click', function() {
+  const currentFolderId = document.getElementById('folder-content').getAttribute('data-current-folder');
+  
+  const taskTitle = document.getElementById('task-title').value;
+  const taskDescription = document.getElementById('task-description').value;
+  const taskDueDate = document.getElementById('task-due-date').value;
+
+  if (taskTitle && taskDescription && taskDueDate) {
+    // Add the new task to the folder's task list
+    const newTask = {
+      title: taskTitle,
+      description: taskDescription,
+      dueDate: taskDueDate
+    };
+
+    folderTasks[currentFolderId].push(newTask);
+
+    // Clear the input fields after adding the task
+    document.getElementById('task-title').value = '';
+    document.getElementById('task-description').value = '';
+    document.getElementById('task-due-date').value = '';
+
+    // Refresh the task list for the current folder
+    showFolderTasks(currentFolderId);
+  }
+});
+
+// Back button handler to return to folder view
+document.getElementById('back-btn').addEventListener('click', function() {
+  document.getElementById('folder-section').style.display = 'block';
+  document.getElementById('folder-content').style.display = 'none';
+});
+
+  // Delete folder button (add functionality as needed)
+  document.getElementById('delete-folder-btn').addEventListener('click', function() {
+    alert('Folder deleted');
+  });
+  

@@ -21,7 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
     // Insert user data into the database
-    $statement = $conn->prepare("INSERT INTO accounts (u_name, email, username, password, u_type, u_status) VALUES (:name, :email, :username, :hashed_password, :accType, :accPlan,:accStatus)");
+    $statement = $conn->prepare("INSERT INTO accounts (u_name, email, username, password, u_type, u_status, plan) VALUES (:name, :email, :username, :hashed_password, :accType, :accStatus, :accPlan)");
+
 
     $statement->bindValue(':name', $name);
     $statement->bindValue(':email', $email);
@@ -60,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css">   
-    <link rel="shortcut icon" href="img/icon-logo.jpg" type="image/x-icon"> 
+    <link rel="shortcut icon" href="img/icons8-to-do-50.png" type="image/x-icon"> 
     <title>Register</title>
 </head>
 <body>

@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="shortcut icon" href="img/icon-logo.jpg" type="image/x-icon">
+    <link rel="shortcut icon" href="img/icons8-to-do-50.png" type="image/x-icon">
     <title>Login Form</title>
 </head>
 <body>
