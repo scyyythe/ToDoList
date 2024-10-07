@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($user['u_type'] == 'Admin') { 
             header("Location: admin.php");  
         } else if ($user['u_type'] == 'User') {
-            header("Location: index.php");  
+            header("Location: dashboard.php");  
         }
         die;  
     } else {
@@ -100,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <p>Enter your personal details <br>
             and start your journey with us</p>
         
-            <button class="btn btn-primary sign-up-btn" id="sign-up-btn" onclick="window.location.href='register.php'">Sign In</button>
+            <button class="btn btn-primary sign-up-btn" id="sign-up-btn" onclick="window.location.href='register.php'">Sign Up</button>
 
     </div>
     

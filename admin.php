@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/admin.css">   
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="shortcut icon" href="img/icons8-to-do-50.png" type="image/x-icon">x-icon"> 
+    <link rel="shortcut icon" href="img/icons8-to-do-50.png" type="image/x-icon">
     <title>ToDo</title>
 </head>
 <body>

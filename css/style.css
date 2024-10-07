@@ -10,7 +10,7 @@
 body, html {
     height: 100%;
     margin: 0;
-    background-color: #473f84;
+    background-color: white;
     display: flex;
     justify-content: center; 
     align-items: center;   
@@ -46,13 +46,14 @@ body, html {
     align-items: center; 
 }
 .form-con{
+    background-color: #473f84;
     border-radius: 20px;
-    border-style: solid;
     border-width: 1px;
     border-color: white;
-    width: 1350px;
+    width: 10s50px;
     display: flex;
     padding: 0;
+    box-shadow: 0 8px 6px rgba(0, 0, 0, 0.3);
 }
 .login-form{
     border-radius: 20px;
@@ -82,8 +83,8 @@ body, html {
 
     position: relative;
     top: 20px;
-    left: 120px;
-    width: 50%;
+    left: 150px;
+    width: 40%;
     border-radius: 20px;
     background-color: #210950;
     border-style: none;
@@ -108,7 +109,7 @@ body, html {
     justify-content: center;
     align-items: center;
 
-    p{
+    p{  
         color: white;
     }
 }
