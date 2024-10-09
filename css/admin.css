@@ -27,9 +27,12 @@
     font-weight: 800;
 }
 .menu{
-    line-height: 4;
+    width: 90%;
+    line-height: 4.5;
     height: 50%;
-
+    display: flex;
+    align-self: center;
+    justify-content: center;
     a{
         text-decoration: none;
         color: white;
@@ -38,11 +41,30 @@
     a:hover{
         color: rgb(127, 10, 182);
     }
+
+    i{
+        margin-right: 20px;
+    }
+
+    i:hover{
+        color: rgb(127, 10, 182);
+    }
 }
 .sidebar li{
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 270px;
+    margin-bottom: 10px;
+    padding: 5px;
     list-style: none;
     text-align: left;
-    
+}
+
+.sidebar li:hover{
+    background-color: #a099d4;    
+    color: #210950;
 }
 #datetime{
     position: relative;
@@ -54,7 +76,7 @@
     margin: 0 auto;
     padding: 20px;
     padding-left: 50px;
-    width: 87%;
+    width: 100%;
     height: 100vh;
     float: right;
     margin-left: 78px; 

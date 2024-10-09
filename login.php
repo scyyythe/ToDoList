@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password = $_POST['password'];
 
     // Fetch user from the database based on the username
-    $statement = $conn->prepare("SELECT u_id, u_name, username, password, u_type FROM accounts WHERE username = :username");
+    $statement = $conn->prepare("SELECT u_id, u_name,email, username, password, u_type FROM accounts WHERE username = :username");
     $statement->bindValue(':username', $username);
     $statement->execute();
     $user = $statement->fetch(PDO::FETCH_ASSOC);
@@ -22,8 +22,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
        
         $_SESSION['u_id'] = $user['u_id'];
         $_SESSION['username'] = $user['username'];
+        $_SESSION['email'] = $user['email']; 
         $_SESSION['name'] = $user['u_name']; 
-        $_SESSION['u_type'] = $user['u_type'];  
+        $_SESSION['u_type'] = $user['u_type']; 
 
      
         if ($user['u_type'] == 'Admin') { 

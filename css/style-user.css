@@ -88,13 +88,11 @@ header ul li a:hover::after {
     width: 100%;
     padding: 2rem;
     border-radius: 20px;
-    margin-block: 1rem;
+    margin-block: 2.5rem;
     height: 150px;
     display: flex;
     align-items: center;
     background-color: #a099d4;
-
-    
 }
 
 .left-dash{
@@ -156,6 +154,7 @@ header ul li a:hover::after {
     background-color: #e5e0e0;
     font-size: .8rem;
     margin-block: 10px;
+    align-items: center;
 }
 .left-dash-list{
     display: flex;
@@ -166,7 +165,7 @@ header ul li a:hover::after {
     display: flex;
     align-items: center;
      text-align: right;
-
+    margin-top: 20px;
      a:hover{
         cursor: pointer;
         color: red;
@@ -291,7 +290,8 @@ header ul li a:hover::after {
     }
 
     textarea{
-        width: 80%;
+        width: 70%;
+        height: 80px;
         resize: none;
         padding: 5px;
         border-radius: 5px;
@@ -299,14 +299,14 @@ header ul li a:hover::after {
 
     button{
         padding: 5px;
-        width: 15%;
+        width: 10%;
         border-radius: 20px;
         border-style: none;
         background-color:#210950;
         color: white;
         position: relative;
         bottom: 140px;
-        left: 80%;
+        left: 90%;
     }
 
     button:hover{
@@ -737,7 +737,7 @@ body.show-popup {
     padding: 20px;
     border-radius: 20px;
     line-height: 2;
-
+    margin-top: 50px;
 
     label{
       
@@ -781,7 +781,7 @@ body.show-popup {
 }
 
 .upgrade-plan-container{
-    width: 70%; 
+    width: 50%; 
     margin-top: 1rem;
     text-align: left;
     padding: 20px;

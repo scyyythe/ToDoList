@@ -1,3 +1,14 @@
+<?php
+    session_start();
+    include("connection.php");
+
+$username = isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest';
+$email = isset($_SESSION['email']) ? $_SESSION['email'] : 'No email';
+$name = isset($_SESSION['name']) ? $_SESSION['name'] : 'User'; 
+$u_id = isset($_SESSION['u_id']) ? $_SESSION['u_id'] : 0; 
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,7 +36,7 @@
 
             <div class="top-dashboard">
                 <div class="left-dash">
-                    <h1>Hi, Jamaica</h1>
+                    <h1>Hi,<?php echo $name?></h1>
                     <p>Ready to start your day with ToDo?</p>
                 </div>
                 <div class="right-dash">
@@ -92,31 +103,6 @@
                                 </form>
                                  
                             </div>
-<!--                           
-
-                            <div class="right-tab">
-
-                                <div class="right-tab-form">
-                                    <form action="">
-                                            <label for="image-note">Upload Image</la><br>
-                                            <input type="file" placeholder="Choose a File"><br>
-            
-                                            <label for="time">Time:</label><br>
-                                            <input type="time"><br>
-            
-                                            <label for="due-date">Due Date:</label><br>
-                                            <input type="date" >
-
-                                    </form>
-                                    
-                                </div>
-                               
-
-                                <div class="display-image">
-                                    <img src="img/image1.png" alt="">
-                                </div>
-                            </div> -->
-
                             
                         </div>
 
@@ -304,13 +290,13 @@
             <div class="settings-information">
             
                 <label for="name">Name</label><br>
-                <input type="text" value="Jamaica Anuba"><br>
+                <input type="text" value="<?php echo $name?>"><br>
 
                 <label for="email">Email</label><br>
-                <input type="text" value="anubajamaiva@gmail.com"><br>
+                <input type="text" value="<?php echo $email?>"><br>
 
                 <label for="username">Username</label><br>
-                <input type="text" value="jaijai"><br>
+                <input type="text" value="<?php echo $username?>"><br>
 
                 <label for="password">Password</label><br>
                 <input type="password"><br><br>

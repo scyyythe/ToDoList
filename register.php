@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         // Save user info to session
         $_SESSION['username'] = $username;
         $_SESSION['name'] = $name; 
-        $_SESSION['email'] = $email;
+        $_SESSION['email'] = $email; 
         $_SESSION['accType'] = $accType;
         $_SESSION['accStatus'] = $accStatus;
 
