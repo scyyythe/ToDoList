@@ -8,13 +8,9 @@
       margin: 0;
 }
 
-    body{
-   max-width: 1400px;
-    height: auto;
 
-    }
     
-    .header{
+.header{
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -24,67 +20,58 @@
     width:95%;
     padding: 20px;
     z-index: 100;
-    }
-    .name{
-        display: flex;
-        float: left;
-        justify-content: baseline;
-        font-size: 25px;
-        font-family: sans-serif;
-        font-weight: 800;
-        text-decoration: none;
-        color:#473f84   ;
-    }
-    .navigatorbar{
+}
+
+.name{
+    display: flex;
+    float: left;
+    justify-content: baseline;
+    font-size: 25px;
+    font-family: sans-serif;
+    font-weight: 800;
+    text-decoration: none;
+    color:#473f84   ;
+}
+.navigatorbar{
     padding: 30px;
     a{
         text-decoration: none;
         color: #473f84;
     }
-    }
+}
 
-    .navigatorbar a{
+.navigatorbar a{
     font-size:#473f84;
     text-decoration: none;
     font-weight: 800;
     margin-left: 50px;
     transition: .3s;
-  
-    }
+}
     .navigatorbar a:hover,
     .navigatorbar a.active{
     text-decoration:underline;
     color: #473f84;
     }
 
-main {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: auto;
-}
 
 
 .container {
     display: flex;
     justify-content: space-between;
-    max-width: 1000px;
-    position: relative;
-    bottom: 40px;
+    max-width: 1500px;
+    margin-inline: auto;
+
 }
 
-.left-container {
-    flex: 1;
-    padding-right: 20px;
-}
 .left-container h3{
     position: relative;
     top: 160px;
     left: 10px;
     color: #473f84;
+    font-size: 2rem;
 }
 .left-container h2 {
-    font-size: 40px;
+    font-size: 3rem;
     padding: 10px;
     position: relative;
     top: 150px;
@@ -97,16 +84,16 @@ main {
     align-items: center;
     position: relative;
     top: 140px;
-    font-size: 14px;
+    font-size: 1rem;
     padding: 10px;
-    line-height: 1.6;
+    line-height:2;
 }
 .left-container button{
-    width: 40%; 
-    height: 35px;
+    width: 30%; 
+    height: 40px;
     position: relative;
     top: 150px;
-    font-size: 13px;
+    font-size: 1rem;
     border-radius: 20px;
     color: white;
     background-color: #473f84;
@@ -121,5 +108,5 @@ main {
 }
 
 .right-container img {
-    max-width: 1200px;
+    width: 600px;
 }

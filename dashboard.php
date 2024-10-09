@@ -26,7 +26,7 @@ $u_id = isset($_SESSION['u_id']) ? $_SESSION['u_id'] : 0;
             <li><a href="#" id="dashboard-link">Dashboard</a></li>
             <li><a href="#" id="my-task-link">My List</a></li>
             <li><a href="#" id="settings-link">Settings</a></li>
-            <li><a href="#">Sign Out</a></li>
+            <li><a href="index.php">Sign Out</a></li>
         </ul>
     </header>
 
