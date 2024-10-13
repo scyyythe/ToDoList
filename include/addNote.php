@@ -25,7 +25,7 @@ if(isset($_POST['addNote'])){
         $_SESSION['note'] = $note;
         $_SESSION['status'] = $status;
 
-         header('Location: dashboard.php');
+        header('Location: ' . $_SERVER['PHP_SELF']);
         exit;   
     }
 

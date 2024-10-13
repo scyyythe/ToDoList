@@ -270,8 +270,11 @@ header ul li a:hover::after {
 
 #tab2-content {
     display: none;
+    
 }
-
+#tab2-content.active {
+    display: block; /* Show when active */
+}
 
 #tab1-content {
     display: block;
@@ -549,6 +552,7 @@ body.show-popup {
     font-family: Arial, sans-serif;
     padding: 20px;
     display: block;
+
   }
 
   .add-folder {
@@ -562,7 +566,8 @@ body.show-popup {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 10px;
-    width: 300px;
+    width: 400px;
+    margin-top: 10px;
   }
 
   .add-folder button {
@@ -577,6 +582,7 @@ body.show-popup {
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    margin-top: 10px;
   }
 
   .add-folder button:hover {
@@ -586,8 +592,14 @@ body.show-popup {
   .folders-container {
     display: flex;
     gap: 20px;
+   
   }
-
+.folder-icon{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
   .folder {
     display: flex;
     flex-direction: column;

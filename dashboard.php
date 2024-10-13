@@ -2,6 +2,7 @@
     session_start();
     include("include/connection.php");
     include("include/addNote.php");
+    include("include/createFolder.php");
 
     $username = $_SESSION['username'];
     $email = $_SESSION['email'];
@@ -20,7 +21,7 @@
     $statement->execute();
     $completedTasks = $statement->fetchAll(PDO::FETCH_ASSOC);
     
-    // Handle form submissions
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['status']) && $_POST['status'] === 'completed') {
         // Update the note status to completed
@@ -50,6 +51,13 @@ $statement = $conn->prepare("SELECT title, note FROM note WHERE u_id = :u_id AND
 $statement->bindValue(':u_id', $u_id);
 $statement->execute();
 $completedTasks = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+//get folder
+$statement=$conn->prepare(("SELECT folder_name FROM folder_tbl WHERE u_id=:u_id"));
+$statement->bindValue(':u_id', $u_id);
+$statement->execute();
+$folders = $statement->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 
 
@@ -162,167 +170,158 @@ $completedTasks = $statement->fetchAll(PDO::FETCH_ASSOC);
 
 
                 <div class="tab-content">
-                    <div class="tab-pane active" id="tab1-content">
-                        <p><b>New List</b></p>
-                        
-                        <div class="inside-tab-pane">
+    <div class="tab-pane active" id="tab1-content">
+        <p><b>New List</b></p>
 
-                            <div class="left-tab">
+        <div class="inside-tab-pane">
+            <div class="left-tab">
+                <form action="" method="POST">
+                    <label for="title">Title</label><br>
+                    <input type="text" name="title" placeholder="Title"><br>
 
-                                <form action="" method="POST">
-                                    
-                                    <label for="title">Title</label><br>
-                                    <input type="text" name="title" placeholder="Title"><br>
+                    <label for="note">Note</label><br>
+                    <textarea name="note" id="to-do-note" placeholder="Add your note"></textarea><br>
 
-                                    <label for="note">Note</label><br>
-                                    <textarea name="note" id="to-do-note" placeholder="Add your note"></textarea><br>
+                    <button name="addNote">Add Note</button>
+                </form>
+            </div>
+        </div>
 
-                                    
-                                    <button name="addNote">Add Note</button>
+        <hr>
+
+        <div class="tab1-below-list">
+            <div class="tab1-head-list">
+                <h3>My List</h3>
+                <a href="javascript:void(0);" onclick="showCompletedTask()">View Completed</a>
+            </div>
+
+            <div class="dash-list-container">
+                <?php if (!empty($notes)) { ?>
+                    <?php foreach ($notes as $note) { ?>
+                        <div class="dash-list">
+                            <div class="left-dash-list">
+                                <h3><?php echo htmlspecialchars($note['title']); ?></h3><br>
+                                <p><?php echo htmlspecialchars($note['note']); ?></p>
+                            </div>
+                            <div class="right-dash-list">
+                                <p>Due Date: September 30, 2024</p><br>
+                                <form method="POST" action="">
+                                    <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
+                                    <input type="hidden" name="status" value="completed">
+                                    <button type="submit">
+                                        <i class='bx bx-check-circle'></i>
+                                    </button>
                                 </form>
-                                 
+                                <form method="POST" action="">
+                                    <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
+                                    <input type="hidden" name="delete_note" value="true">
+                                    <button type="submit" onclick="return confirm('Are you sure you want to delete this note?');">
+                                        <i class='bx bxs-trash'></i>
+                                    </button>
+                                </form>
+                                <form method="GET" action="edit_note.php">
+                                    <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
+                                    <button type="submit">
+                                        <i class='bx bxs-edit'></i>
+                                    </button>
+                                </form>
                             </div>
-                            
                         </div>
-
-                        <hr>
-
-                        <div class="tab1-below-list">
-                            <div class="tab1-head-list">
-                                <h3>My List</h3>
-                                <a href="javascript:void(0);" onclick="showCompletedTask()">View Completed</a>
-                           </div>
-                           
-                           <div class="dash-list-container">
-    <?php if (!empty($notes)) { ?>
-        <?php foreach ($notes as $note) { ?>
-            <div class="dash-list">
-                <div class="left-dash-list">
-                    <h3><?php echo htmlspecialchars($note['title']); ?></h3><br>
-                    <p><?php echo htmlspecialchars($note['note']); ?></p>
-                </div>
-                <div class="right-dash-list">
-                    <p>Due Date: September 30, 2024</p><br>
-
-                
-                    <form method="POST" action="">
-                        <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
-                        <input type="hidden" name="status" value="completed">
-                        <button type="submit">
-                            <i class='bx bx-check-circle'></i>
-                        </button>
-                    </form>
-
-                  
-                    <form method="POST" action="">
-                        <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
-                        <input type="hidden" name="delete_note" value="true">
-                        <button type="submit" onclick="return confirm('Are you sure you want to delete this note?');">
-                            <i class='bx bxs-trash'></i>
-                        </button>
-                    </form>
-
-               
-                    <form method="GET" action="edit_note.php">
-                        <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
-                        <button type="submit">
-                            <i class='bx bxs-edit'></i>
-                        </button>
-                    </form>
-                </div>
+                    <?php } ?>
+                <?php } else { ?>
+                    <p>No pending tasks available.</p>
+                <?php } ?>
             </div>
-        <?php } ?>
-    <?php } else { ?>
-        <p>No pending tasks available.</p>
-    <?php } ?>
+
+            <section id="completed-task" style="display: none;">
+                <div class="completed-header">
+                    <h3>Completed Tasks</h3>
+                    <a href="javascript:void(0);" onclick="hideCompletedTask()">Close</a>
+                </div>
+                <div class="dash-list-container">
+                    <?php if (!empty($completedTasks)) { ?>
+                        <?php foreach ($completedTasks as $task) { ?>
+                            <div class="dash-list">
+                                <div class="left-dash-list">
+                                    <h3><?php echo htmlspecialchars($task['title']); ?></h3>
+                                    <p><?php echo htmlspecialchars($task['note']); ?></p>
+                                </div>
+                                <div class="right-dash-list">
+                                    <p>Due Date: September 30, 2024</p>
+                                </div>
+                            </div>
+                        <?php } ?>
+                    <?php } else { ?>
+                        <p>No completed tasks available.</p>
+                    <?php } ?>
+                </div>
+            </section>
+
+            <a href="#" id="allTask-link">View All Task</a>
+        </div>
+    </div>
+
+    <!-- tab 2 -->
+    <div class="tab-pane" id="tab2-content">
+        <section id="folder-section">
+            <h4>Organize your list!</h4><br>
+            <h5>Create New Folder</h5>
+            <div class="add-folder">
+                <form id="add-folder-form" method="POST">
+                    <input type="text" id="folder-name" name="folder_name" placeholder="Add Folder" required />
+                    <button type="submit" name="createFolder">Add</button>
+                </form>
+            </div>
+
+
+            <hr />
+            <div class="folders-container" id="folders-container">
+    <?php
+  
+    if (!empty($folders)) {
+        foreach ($folders as $folder) {
+            echo '<div class="folder-icon">';
+            echo '<img src="img/icons8-folder-64.png" alt="">'; 
+            echo '<p>' . htmlspecialchars($folder['folder_name']) . '</p>'; 
+            echo '</div>';
+        }
+    } else {
+        echo '<p>No folders found.</p>';
+    }
+    ?>
 </div>
-                       
-                        <section id="completed-task" style="display: none;">
-                            <div class="completed-header">
-                                <h3>Completed Tasks</h3>
-                                <a href="javascript:void(0);" onclick="hideCompletedTask()">Close</a> 
-                            </div>
-                            <!-- display completed -->
 
-                            <div class="grid-container">
-                                <?php if (!empty($completedTasks)) { ?>
-                                    <?php foreach ($completedTasks as $task) { ?>
-                                        <div class="grid-item">
-                                            <div class="left-dash-list">
-                                                <h3><?php echo htmlspecialchars($task['title']); ?></h3>
-                                                <p><?php echo htmlspecialchars($task['note']); ?></p>
-                                            </div>
-                                            <div class="right-dash-list">
-                                                <p>Due Date: September 30, 2024</p>
-                                            </div>
-                                        </div>
-                                    <?php } ?>
-                                <?php } else { ?>
-                                    <p>No completed tasks available.</p>
-                                <?php } ?>
-                            </div>
+        </section>
 
-
-
-                        
-                        </section>
-
-                       <a href="#" id="allTask-link">View All Task</a>                
-
-                    </div>
-
-                    <!-- tab 2 -->
-                    <div class="tab-pane" id="tab2-content">                     
-                     
-                        <section id="folder-section">
-                            <h4>Organize your list!</h4><br>
-                            <h5>Create New Folder</h5>
-                            <div class="add-folder">
-                            <input type="text" id="folder-name" placeholder="Add Folder" />
-                            <button id="add-folder-btn">Add</button>
-                            </div>
-                            <hr />
-                        
-                          
-                            <div class="folders-container" id="folders-container">
-                            <!-- created folders will appear here -->
-                            </div>
-                        </section>
-                        
-                     
         <section id="folder-content" style="display:none;">
-                    <div class="folder-header">
-                    <button id="back-btn">&larr; Back to Folders</button>
-                    <button id="delete-folder-btn" class="delete-folder">Delete Folder</button>
-                    </div>
-      
-                    <hr />
-                    <div id="add-task-form">
-                        <div class="right-task-form">
-                            <input type="text" id="task-title" placeholder="Note Title" required />
-                            <input type="text" id="task-description" placeholder="Note Description" required />
-                        </div>
-                        
-                        <div class="due-date-task-form">
-                            <label for="due-date-folder">Deadline</label><br>
-                            <input type="date" id="task-due-date" name="due-date-folder" placeholder="Due Date" required /><br>
-                            <label for="image-note">Upload Image</label><br>
-                            <input type="file" id="task-image" accept="image/*"><br>
-                        </div>
-                        
-                        <button id="add-task-btn">Add Task</button>
-                    </div>
-                    
-                    <hr />
-                
-                    
-                    <div id="task-list"></div>
-                </section>
-                
-                            
-        
-                </div>
+            <div class="folder-header">
+                <button id="back-btn">&larr; Back to Folders</button>
+                <button id="delete-folder-btn" class="delete-folder">Delete Folder</button>
             </div>
+
+            <hr />
+            <div id="add-task-form">
+                <div class="right-task-form">
+                    <input type="text" id="task-title" placeholder="Note Title" required />
+                    <input type="text" id="task-description" placeholder="Note Description" required />
+                </div>
+
+                <div class="due-date-task-form">
+                    <label for="due-date-folder">Deadline</label><br>
+                    <input type="date" id="task-due-date" name="due-date-folder" placeholder="Due Date" required /><br>
+                    <label for="image-note">Upload Image</label><br>
+                    <input type="file" id="task-image" accept="image/*"><br>
+                </div>
+
+                <button id="add-task-btn">Add Task</button>
+            </div>
+
+            <hr />
+            <div id="task-list"></div>
+        </section>
+    </div>
+</div>
+
         </section>
 
 
@@ -341,7 +340,7 @@ $completedTasks = $statement->fetchAll(PDO::FETCH_ASSOC);
                         <<?php foreach ($notes as $note) { ?>
                 <div class="task-box">
                     <div class="check-task">
-                    <form method="POST" action="">
+                        <form method="POST" action="">
                         <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
                         <input type="hidden" name="status" value="completed">
                         <button type="submit">
