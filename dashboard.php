@@ -1,11 +1,25 @@
 <?php
     session_start();
-    include("connection.php");
+    include("include/connection.php");
+    include("include/addNote.php");
 
-$username = isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest';
-$email = isset($_SESSION['email']) ? $_SESSION['email'] : 'No email';
-$name = isset($_SESSION['name']) ? $_SESSION['name'] : 'User'; 
-$u_id = isset($_SESSION['u_id']) ? $_SESSION['u_id'] : 0; 
+    $username = $_SESSION['username'];
+    $email = $_SESSION['email'];
+    $name = isset($_SESSION['name']) ? $_SESSION['name'] : 'User'; 
+    $u_id = $_SESSION['u_id'];  
+
+    //pending na notes
+    $statement = $conn->prepare("SELECT title, note FROM note WHERE u_id = :u_id AND status = 'Pending'");
+    $statement->bindValue(':u_id', $u_id);
+    $statement->execute();
+    $notes= $statement->fetchAll(PDO::FETCH_ASSOC);
+
+    //completed na notes
+    $statement = $conn->prepare("SELECT title, note FROM note WHERE u_id = :u_id AND status = 'Completed'");
+    $statement->bindValue(':u_id', $u_id);
+    $statement->execute();
+    $completedTasks = $statement->fetchAll(PDO::FETCH_ASSOC);
+    
 ?>
 
 
@@ -54,17 +68,26 @@ $u_id = isset($_SESSION['u_id']) ? $_SESSION['u_id'] : 0;
                     </div>
                 </div>
                 <h4>My List</h4>
-                <div class="dash-list">
-                    <div class="left-dash-list">
-                        <h3>Performance Task Photoshop</h3><br>
-                        <p>Submit raw, png, and psd file in google classroom.</p>
-                    </div>
-                    <div class="right-dash-list">
-                        <p>Due Date: September 30, 2024</p><br>
-                        <i class='bx bx-check-circle'></i>
-                        <i class='bx bxs-trash'></i>
-                    </div>
+                <div class="dash-list-container">
+                    <?php if (!empty($notes)) { ?>
+                        <?php foreach ($notes as $note) { ?>
+                            <div class="dash-list">
+                                <div class="left-dash-list">
+                                    <h3><?php echo htmlspecialchars($note['title']); ?></h3><br>
+                                    <p><?php echo htmlspecialchars($note['note']); ?></p>
+                                </div>
+                                <div class="right-dash-list">
+                                    <p>Due Date: September 30, 2024</p><br>
+                                    <i class='bx bx-check-circle'></i>
+                                    <i class='bx bxs-trash'></i>
+                                </div>
+                            </div>
+                        <?php } ?>
+                    <?php } else { ?>
+                        <p>No pending tasks available.</p>
+                    <?php } ?>
                 </div>
+
             </div>
         </section>
 
@@ -90,16 +113,16 @@ $u_id = isset($_SESSION['u_id']) ? $_SESSION['u_id'] : 0;
 
                             <div class="left-tab">
 
-                                <form action="">
+                                <form action="" method="POST">
                                     
                                     <label for="title">Title</label><br>
-                                    <input type="text" placeholder="Title"><br>
+                                    <input type="text" name="title" placeholder="Title"><br>
 
                                     <label for="note">Note</label><br>
-                                    <textarea name="to-do-note" id="to-do-note" placeholder="Add your note"></textarea><br>
+                                    <textarea name="note" id="to-do-note" placeholder="Add your note"></textarea><br>
 
                                     
-                                    <button>Add Note</button>
+                                    <button name="addNote">Add Note</button>
                                 </form>
                                  
                             </div>
@@ -114,31 +137,27 @@ $u_id = isset($_SESSION['u_id']) ? $_SESSION['u_id'] : 0;
                                 <a href="javascript:void(0);" onclick="showCompletedTask()">View Completed</a>
                            </div>
                            
-                            <div class="dash-list">
-                                <div class="left-dash-list">
-                                    <h3>Performance Task Photoshop</h3><br>
-                                    <p>Submit raw, png, and psd file in google classroom.</p>
-                                </div>
-                                <div class="right-dash-list">
-                                    <p>Due Date: September 30, 2024</p><br>
-                                    <a href="" class="edit-list"><b>Edit List</b></a>
-                                    <i class='bx bx-check-circle'></i>
-                                    <i class='bx bxs-trash'></i>
-                                </div>
+                           <div class="dash-list-container">
+                                <?php if (!empty($notes)) { ?>
+                                    <?php foreach ($notes as $note) { ?>
+                                        <div class="dash-list">
+                                            <div class="left-dash-list">
+                                                <h3><?php echo htmlspecialchars($note['title']); ?></h3><br>
+                                                <p><?php echo htmlspecialchars($note['note']); ?></p>
+                                            </div>
+                                            <div class="right-dash-list">
+                                                <p>Due Date: September 30, 2024</p><br>
+                                                <i class='bx bx-check-circle'></i>
+                                                <i class='bx bxs-trash'></i>
+                                            </div>
+                                        </div>
+                                    <?php } ?>
+                                <?php } else { ?>
+                                    <p>No pending tasks available.</p>
+                                <?php } ?>
                             </div>
 
-                            <div class="dash-list">
-                                <div class="left-dash-list">
-                                    <h3>Performance Task Photoshop</h3><br>
-                                    <p>Submit raw, png, and psd file in google classroom.</p>
-                                </div>
-                                <div class="right-dash-list">
-                                    <p>Due Date: September 30, 2024</p><br>
-                                    <a href="" class="edit-list"><b>Edit List</b></a>
-                                    <i class='bx bx-check-circle'></i>
-                                    <i class='bx bxs-trash'></i>
-                                </div>
-                            </div>
+
                         </div>
                        
                         <section id="completed-task" style="display: none;">
@@ -149,26 +168,23 @@ $u_id = isset($_SESSION['u_id']) ? $_SESSION['u_id'] : 0;
                             <!-- display completed -->
 
                             <div class="dash-list">
-                                <div class="left-dash-list">
-                                    <h3>Performance Task Photoshop</h3><br>
-                                    <p>Submit raw, png, and psd file in google classroom.</p>
-                                </div>
-                                <div class="right-dash-list">
-                                    <p>Due Date: September 30, 2024</p><br>
-                           
-                                </div>
+                                <?php if (!empty($completedTasks)) { ?>
+                                    <?php foreach ($completedTasks as $task) { ?>
+                                        <div class="dash-list">
+                                            <div class="left-dash-list">
+                                                <h3><?php echo htmlspecialchars($task['title']); ?></h3><br>
+                                                <p><?php echo htmlspecialchars($task['note']); ?></p>
+                                            </div>
+                                            <div class="right-dash-list">
+                                                <p>Due Date: September 30, 2024</p><br>
+                                            </div>
+                                        </div>
+                                    <?php } ?>
+                                <?php } else { ?>
+                                    <p>No completed tasks available.</p>
+                                <?php } ?>
                             </div>
 
-                            <div class="dash-list">
-                                <div class="left-dash-list">
-                                    <h3>Performance Task Photoshop</h3><br>
-                                    <p>Submit raw, png, and psd file in google classroom.</p>
-                                </div>
-                                <div class="right-dash-list">
-                                    <p>Due Date: September 30, 2024</p><br>
-                           
-                                </div>
-                            </div>
 
                         
                         </section>
@@ -242,15 +258,18 @@ $u_id = isset($_SESSION['u_id']) ? $_SESSION['u_id'] : 0;
           
             <div class="all-task-container">
 
+            <div class="task-list">
+            
+                        <<?php foreach ($notes as $note) { ?>
                 <div class="task-box">
                     <div class="task-box-top">
                         <i class='bx bx-check-circle'></i>
-                        <h3>Performance Task Photoshop</h3>
-                        <p>Submit raw, png, and psd file in google classroom.</p>
+                        <h3><?php echo htmlspecialchars($note['title']); ?></h3>
+                        <p><?php echo htmlspecialchars($note['note']); ?></p>
                     </div>
                     <div class="task-box-bottom">
                         <div class="task-due">
-                            <p>Due Date: September 30, 2024</p>
+                        <p>Due Date: September 30, 2024</p><br>
                         </div>
                         <div class="task-actions">
                             <a href="" class="edit-task"><b>Edit Task</b></a>
@@ -258,24 +277,10 @@ $u_id = isset($_SESSION['u_id']) ? $_SESSION['u_id'] : 0;
                         </div>
                     </div>
                 </div>
+            <?php } ?>
+
+            </div>
                 
-                <div class="task-box">
-                    <div class="task-box-top">
-                        <i class='bx bx-check-circle'></i>
-                        <h3>Performance Task Photoshop</h3>
-                        <p>Submit raw, png, and psd file in google classroom.</p>
-                    </div>
-                    <div class="task-box-bottom">
-                        <div class="task-due">
-                            <p>Due Date: September 30, 2024</p>
-                        </div>
-                        <div class="task-actions">
-                            <a href="" class="edit-task"><b>Edit Task</b></a>
-                            <i class='bx bxs-trash'></i>
-                        </div>
-                    </div>
-                </div>
-                             
             
             </div>
             
