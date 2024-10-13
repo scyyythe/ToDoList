@@ -1,26 +1,24 @@
 <?php 
 session_start();
-include("connection.php");
+include("include/connection.php");
 
 $error = "";
 $success = "";
 $result = [];
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
-    // Define account type and status
+    
     $accType = 'User';
     $accStatus = 'Pending';
     $accPlan='Basic';
 
-    // Get data from form fields
+
     $name = $_POST['name'];
     $email = $_POST['email'];
     $username = $_POST['username'];
     $password = $_POST['password'];
-
-    // Hash the password
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-    // Insert user data into the database
+
     $statement = $conn->prepare("INSERT INTO accounts (u_name, email, username, password, u_type, u_status, plan) VALUES (:name, :email, :username, :hashed_password, :accType, :accStatus, :accPlan)");
 
 
@@ -35,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $result = $statement->execute();
 
     if ($result) {
-        // Save user info to session
+
         $_SESSION['username'] = $username;
         $_SESSION['name'] = $name; 
         $_SESSION['email'] = $email; 
@@ -43,8 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         $_SESSION['accStatus'] = $accStatus;
 
         $success = "Registration successful!";
-        // Redirect after a short delay
-        // header("Location:login.php");
+
 
        
     } else {

@@ -20,6 +20,36 @@
     $statement->execute();
     $completedTasks = $statement->fetchAll(PDO::FETCH_ASSOC);
     
+    // Handle form submissions
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['status']) && $_POST['status'] === 'completed') {
+        // Update the note status to completed
+        $noteId = $_POST['note_id'];
+        $stmt = $conn->prepare("UPDATE note SET status = 'Completed' WHERE note_id = :note_id AND u_id = :u_id");
+        $stmt->bindValue(':note_id', $noteId);
+        $stmt->bindValue(':u_id', $u_id);
+        $stmt->execute();
+    } elseif (isset($_POST['delete_note'])) {
+        // Delete the note
+        $noteId = $_POST['note_id'];
+        $stmt = $conn->prepare("DELETE FROM note WHERE note_id = :note_id AND u_id = :u_id");
+        $stmt->bindValue(':note_id', $noteId);
+        $stmt->bindValue(':u_id', $u_id);
+        $stmt->execute();
+    }
+}
+
+// pending notes
+$statement = $conn->prepare("SELECT note_id, title, note FROM note WHERE u_id = :u_id AND status = 'Pending'");
+$statement->bindValue(':u_id', $u_id);
+$statement->execute();
+$notes = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+// completed notes
+$statement = $conn->prepare("SELECT title, note FROM note WHERE u_id = :u_id AND status = 'Completed'");
+$statement->bindValue(':u_id', $u_id);
+$statement->execute();
+$completedTasks = $statement->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 
@@ -69,24 +99,50 @@
                 </div>
                 <h4>My List</h4>
                 <div class="dash-list-container">
-                    <?php if (!empty($notes)) { ?>
-                        <?php foreach ($notes as $note) { ?>
-                            <div class="dash-list">
-                                <div class="left-dash-list">
-                                    <h3><?php echo htmlspecialchars($note['title']); ?></h3><br>
-                                    <p><?php echo htmlspecialchars($note['note']); ?></p>
-                                </div>
-                                <div class="right-dash-list">
-                                    <p>Due Date: September 30, 2024</p><br>
-                                    <i class='bx bx-check-circle'></i>
-                                    <i class='bx bxs-trash'></i>
-                                </div>
-                            </div>
-                        <?php } ?>
-                    <?php } else { ?>
-                        <p>No pending tasks available.</p>
-                    <?php } ?>
+    <?php if (!empty($notes)) { ?>
+        <?php foreach ($notes as $note) { ?>
+            <div class="dash-list">
+                <div class="left-dash-list">
+                    <h3><?php echo htmlspecialchars($note['title']); ?></h3><br>
+                    <p><?php echo htmlspecialchars($note['note']); ?></p>
                 </div>
+                <div class="right-dash-list">
+                    <p>Due Date: September 30, 2024</p><br>
+
+                
+                    <form method="POST" action="">
+                        <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
+                        <input type="hidden" name="status" value="completed">
+                        <button type="submit">
+                            <i class='bx bx-check-circle'></i>
+                        </button>
+                    </form>
+
+                  
+                    <form method="POST" action="">
+                        <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
+                        <input type="hidden" name="delete_note" value="true">
+                        <button type="submit" onclick="return confirm('Are you sure you want to delete this note?');">
+                            <i class='bx bxs-trash'></i>
+                        </button>
+                    </form>
+
+               
+                    <form method="GET" action="edit_note.php">
+                        <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
+                        <button type="submit">
+                            <i class='bx bxs-edit'></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        <?php } ?>
+    <?php } else { ?>
+        <p>No pending tasks available.</p>
+    <?php } ?>
+</div>
+
+
 
             </div>
         </section>
@@ -138,27 +194,48 @@
                            </div>
                            
                            <div class="dash-list-container">
-                                <?php if (!empty($notes)) { ?>
-                                    <?php foreach ($notes as $note) { ?>
-                                        <div class="dash-list">
-                                            <div class="left-dash-list">
-                                                <h3><?php echo htmlspecialchars($note['title']); ?></h3><br>
-                                                <p><?php echo htmlspecialchars($note['note']); ?></p>
-                                            </div>
-                                            <div class="right-dash-list">
-                                                <p>Due Date: September 30, 2024</p><br>
-                                                <i class='bx bx-check-circle'></i>
-                                                <i class='bx bxs-trash'></i>
-                                            </div>
-                                        </div>
-                                    <?php } ?>
-                                <?php } else { ?>
-                                    <p>No pending tasks available.</p>
-                                <?php } ?>
-                            </div>
+    <?php if (!empty($notes)) { ?>
+        <?php foreach ($notes as $note) { ?>
+            <div class="dash-list">
+                <div class="left-dash-list">
+                    <h3><?php echo htmlspecialchars($note['title']); ?></h3><br>
+                    <p><?php echo htmlspecialchars($note['note']); ?></p>
+                </div>
+                <div class="right-dash-list">
+                    <p>Due Date: September 30, 2024</p><br>
 
+                
+                    <form method="POST" action="">
+                        <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
+                        <input type="hidden" name="status" value="completed">
+                        <button type="submit">
+                            <i class='bx bx-check-circle'></i>
+                        </button>
+                    </form>
 
-                        </div>
+                  
+                    <form method="POST" action="">
+                        <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
+                        <input type="hidden" name="delete_note" value="true">
+                        <button type="submit" onclick="return confirm('Are you sure you want to delete this note?');">
+                            <i class='bx bxs-trash'></i>
+                        </button>
+                    </form>
+
+               
+                    <form method="GET" action="edit_note.php">
+                        <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
+                        <button type="submit">
+                            <i class='bx bxs-edit'></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        <?php } ?>
+    <?php } else { ?>
+        <p>No pending tasks available.</p>
+    <?php } ?>
+</div>
                        
                         <section id="completed-task" style="display: none;">
                             <div class="completed-header">
@@ -167,16 +244,16 @@
                             </div>
                             <!-- display completed -->
 
-                            <div class="dash-list">
+                            <div class="grid-container">
                                 <?php if (!empty($completedTasks)) { ?>
                                     <?php foreach ($completedTasks as $task) { ?>
-                                        <div class="dash-list">
+                                        <div class="grid-item">
                                             <div class="left-dash-list">
-                                                <h3><?php echo htmlspecialchars($task['title']); ?></h3><br>
+                                                <h3><?php echo htmlspecialchars($task['title']); ?></h3>
                                                 <p><?php echo htmlspecialchars($task['note']); ?></p>
                                             </div>
                                             <div class="right-dash-list">
-                                                <p>Due Date: September 30, 2024</p><br>
+                                                <p>Due Date: September 30, 2024</p>
                                             </div>
                                         </div>
                                     <?php } ?>
@@ -184,6 +261,7 @@
                                     <p>No completed tasks available.</p>
                                 <?php } ?>
                             </div>
+
 
 
                         
@@ -212,7 +290,7 @@
                         </section>
                         
                      
-                <section id="folder-content" style="display:none;">
+        <section id="folder-content" style="display:none;">
                     <div class="folder-header">
                     <button id="back-btn">&larr; Back to Folders</button>
                     <button id="delete-folder-btn" class="delete-folder">Delete Folder</button>
@@ -262,8 +340,16 @@
             
                         <<?php foreach ($notes as $note) { ?>
                 <div class="task-box">
+                    <div class="check-task">
+                    <form method="POST" action="">
+                        <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
+                        <input type="hidden" name="status" value="completed">
+                        <button type="submit">
+                            <i class='bx bx-check-circle'></i>
+                        </button>
+                    </form>
+                    </div>
                     <div class="task-box-top">
-                        <i class='bx bx-check-circle'></i>
                         <h3><?php echo htmlspecialchars($note['title']); ?></h3>
                         <p><?php echo htmlspecialchars($note['note']); ?></p>
                     </div>
@@ -272,8 +358,22 @@
                         <p>Due Date: September 30, 2024</p><br>
                         </div>
                         <div class="task-actions">
-                            <a href="" class="edit-task"><b>Edit Task</b></a>
-                            <i class='bx bxs-trash'></i>
+                
+                            <form method="POST" action="">
+                                <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
+                                <input type="hidden" name="delete_note" value="true">
+                                <button type="submit" onclick="return confirm('Are you sure you want to delete this note?');">
+                                    <i class='bx bxs-trash'></i>
+                                </button>
+                            </form>
+
+
+                            <form method="GET" action="edit_note.php">
+                                <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
+                                <button type="submit">
+                                    <i class='bx bxs-edit'></i>
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>

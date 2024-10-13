@@ -155,6 +155,7 @@ header ul li a:hover::after {
     font-size: .8rem;
     margin-block: 10px;
     align-items: center;
+    
 }
 .left-dash-list{
     display: flex;
@@ -172,12 +173,16 @@ header ul li a:hover::after {
         text-decoration: underline;
      }
    
+     button{
+        background: none;
+        border-style: none;
+
+     }
 
 }
 
 .bx-check-circle{
     font-size: 1.3rem;
-    margin-inline: 10px;
     color: green;
 }
 .bx-check-circle:hover{
@@ -189,10 +194,19 @@ header ul li a:hover::after {
 .bxs-trash{
     color:rgb(38, 3, 102) ;
     font-size: 1.5rem;
+    margin-inline: 10px;
 }
 
 .bxs-trash:hover{
     color: red;
+    font-weight: bold;
+}
+.bxs-edit{
+    font-size: 1.5rem;
+    
+}
+.bxs-edit:hover{
+    font-weight: bold;
 
 }
 /* my task section */
@@ -230,7 +244,7 @@ header ul li a:hover::after {
     padding: 10px; 
     border: none; 
     cursor: pointer; 
-    transition: background-color 0.3s; /
+    transition: background-color 0.3s; 
 }
 
 .tab-button.active {
@@ -253,12 +267,12 @@ header ul li a:hover::after {
 .tab-pane.active {
     display: block; 
 }
-/* Hide Tab 2 content by default */
+
 #tab2-content {
     display: none;
 }
 
-/* Make Tab 1 content visible by default */
+
 #tab1-content {
     display: block;
 }
@@ -379,6 +393,34 @@ header ul li a:hover::after {
 body.show-popup {
     overflow: hidden; 
 }
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
+    gap: 16px; 
+    padding: 16px; 
+}
+
+.grid-item {
+    background-color: #f9f9f9; 
+    border: 1px solid #ddd; 
+    border-radius: 8px; 
+    padding: 16px; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+    transition: transform 0.2s; 
+}
+
+.grid-item:hover {
+    transform: scale(1.02); 
+}
+
+.left-dash-list {
+    margin-bottom: 10px; 
+}
+
+.right-dash-list {
+    font-size: 0.9em; 
+    color: #555; 
+}
 
 /* view all task css */
 .head-viewtastContainer{
@@ -431,7 +473,7 @@ body.show-popup {
 
 .task-box-top i {
     position: relative;
-    left: 92%;
+    left: 100%;
     font-size: 20px; 
     color: green;
 }
@@ -451,7 +493,16 @@ body.show-popup {
     justify-content: space-between; 
     align-items: center;
 }
+.check-task{
+    position: relative;
+    left: 250px;
 
+    button{
+        border-style: none;
+        background-color: transparent;
+        font-size: 1rem;
+    }
+}
 .task-actions {
     position: relative;
     right: 10px;
@@ -459,6 +510,11 @@ body.show-popup {
     align-items: center;
     width: 100%;
     justify-content: space-between;
+
+    button{
+        border-style: none;
+        background-color: transparent;
+    }
 }
 .task-actions i:hover{
     cursor: pointer;
@@ -492,7 +548,7 @@ body.show-popup {
 #folder-section {
     font-family: Arial, sans-serif;
     padding: 20px;
-
+    display: block;
   }
 
   .add-folder {
@@ -718,6 +774,7 @@ body.show-popup {
   }
   
   .bxs-trash {
+    
     color: #ff3d3d;
   }
   
@@ -728,6 +785,7 @@ body.show-popup {
   .bxs-trash:hover {
     color: #d30b0b;
   }
+
 /* settings css */
 #settings{
     overflow: hidden;
@@ -834,5 +892,79 @@ body.show-popup {
     left: 0;
     top: 0;
 }
+
+/* edit note/update note */
+
+.edit-note-container {
+    max-width: 600px;
+    margin-top: 50px;
+    margin-inline: auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+
+    textarea{
+        resize: none;
+    }
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    
+    form {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    label {
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+    
+    input[type="text"], textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    
+    button {
+        padding: 10px 15px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+    
+    button:hover {
+        background-color: #0056b3;
+    }
+    
+}
+
+.cancel-button {
+    margin-top: 20px;
+    display: inline-block;
+    background-color: #ccc; 
+    color: #333;
+    border: none;
+    border-radius: 4px;
+    text-align: center;
+    text-decoration: none; 
+    cursor: pointer;
+    width: 100%;
+    position: relative;
+    right: 20px;
+    
+}
+
+.cancel-button:hover {
+    background-color: #bbb; 
+}
+
+
 
 /* payment */
