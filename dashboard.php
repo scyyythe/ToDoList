@@ -175,15 +175,17 @@ $folders = $statement->fetchAll(PDO::FETCH_ASSOC);
 
         <div class="inside-tab-pane">
             <div class="left-tab">
-                <form action="" method="POST">
-                    <label for="title">Title</label><br>
-                    <input type="text" name="title" placeholder="Title"><br>
+            <form id="noteForm" method="POST">
+                <label for="title">Title</label><br>
+                <input type="text" name="title" placeholder="Title" required><br>
 
-                    <label for="note">Note</label><br>
-                    <textarea name="note" id="to-do-note" placeholder="Add your note"></textarea><br>
+                <label for="note">Note</label><br>
+                <textarea name="note" id="to-do-note" placeholder="Add your note" required></textarea><br>
 
-                    <button name="addNote">Add Note</button>
-                </form>
+                <button type="submit" name="addNote">Add Note</button> 
+            </form>
+
+
             </div>
         </div>
 
@@ -435,5 +437,6 @@ $folders = $statement->fetchAll(PDO::FETCH_ASSOC);
     <script src="js/dashboard.js">
         
     </script>
+    <script src="js/api.js"></script>
 </body>
 </html>
