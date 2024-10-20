@@ -116,25 +116,14 @@ $folders = $statement->fetchAll(PDO::FETCH_ASSOC);
                 </div>
                 <div class="right-dash-list">
                     <p>Due Date: September 30, 2024</p><br>
-
                 
-                    <form method="POST" action="">
-                        <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
-                        <input type="hidden" name="status" value="completed">
-                        <button type="submit">
-                            <i class='bx bx-check-circle'></i>
+                        <button type="button" class="complete-note-btn mark-complete-btn" data-note-id="<?php echo $note['note_id']; ?>">
+                            <i class='bx bx-check-circle'></i> 
                         </button>
-                    </form>
-
                   
-                    <form method="POST" action="">
-                        <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
-                        <input type="hidden" name="delete_note" value="true">
-                        <button type="submit" onclick="return confirm('Are you sure you want to delete this note?');">
+                        <button type="button" class="delete-note-btn" data-note-id="<?php echo $note['note_id']; ?>">
                             <i class='bx bxs-trash'></i>
                         </button>
-                    </form>
-
                
                     <form method="GET" action="edit_note.php">
                         <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
@@ -234,11 +223,21 @@ $folders = $statement->fetchAll(PDO::FETCH_ASSOC);
                     <p>No pending tasks available.</p>
                 <?php } ?>
             </div>
-
+   
             <section id="completed-task" style="display: none;">
+                <button type="button" id="delete-completed-btn" onclick="return confirm('Are you sure you want to delete all completed notes?');">
+                    <i class='bx bxs-trash'></i> Delete All
+                </button>
+           
+
+     
                 <div class="completed-header">
                     <h3>Completed Tasks</h3>
                     <a href="javascript:void(0);" onclick="hideCompletedTask()">Close</a>
+                </div>
+
+                <div class="message">
+
                 </div>
                 <div class="dash-list-container">
                     <?php if (!empty($completedTasks)) { ?>
@@ -257,6 +256,7 @@ $folders = $statement->fetchAll(PDO::FETCH_ASSOC);
                         <p>No completed tasks available.</p>
                     <?php } ?>
                 </div>
+
             </section>
 
             <a href="#" id="allTask-link">View All Task</a>
@@ -433,10 +433,10 @@ $folders = $statement->fetchAll(PDO::FETCH_ASSOC);
         </section>
         
     </div>
-
+    <script src="js/api.js"></script>
     <script src="js/dashboard.js">
         
     </script>
-    <script src="js/api.js"></script>
+    
 </body>
 </html>

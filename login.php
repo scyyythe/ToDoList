@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    // Fetch user from the database based on the username
+    
     $statement = $conn->prepare("SELECT u_id, u_name,email, username, password, u_type FROM accounts WHERE username = :username");
     $statement->bindValue(':username', $username);
     $statement->execute();
