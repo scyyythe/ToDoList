@@ -1,26 +1,36 @@
 <?php
     session_start();
     include("include/connection.php");
-    include("include/addNote.php");
+    include("include/getData.php");
     include("include/createFolder.php");
+
 
     $username = $_SESSION['username'];
     $email = $_SESSION['email'];
     $name = isset($_SESSION['name']) ? $_SESSION['name'] : 'User'; 
     $u_id = $_SESSION['u_id'];  
 
-    //pending na notes
-    $statement = $conn->prepare("SELECT title, note FROM note WHERE u_id = :u_id AND status = 'Pending'");
-    $statement->bindValue(':u_id', $u_id);
-    $statement->execute();
-    $notes= $statement->fetchAll(PDO::FETCH_ASSOC);
+    $noteManager = new NoteManager($conn, $u_id);
 
-    //completed na notes
-    $statement = $conn->prepare("SELECT title, note FROM note WHERE u_id = :u_id AND status = 'Completed'");
-    $statement->bindValue(':u_id', $u_id);
-    $statement->execute();
-    $completedTasks = $statement->fetchAll(PDO::FETCH_ASSOC);
+    $notes= $noteManager->getPendingNotes();
+    $completedTasks = $noteManager->getCompletedNotes();
+    $folders = $noteManager->getUserFolders();
     
+    if (isset($_POST['addNote'])) {
+        if ($_SERVER['REQUEST_METHOD'] == "POST") {
+            $title = $_POST['title'];
+            $note = $_POST['note'];
+    
+            if ($noteManager->addNote($title, $note)) {
+                header('Location:"dashboard.php"');
+                exit;
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Failed to add note.']);
+                exit;
+            }
+        }
+    }
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['status']) && $_POST['status'] === 'completed') {
@@ -40,23 +50,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// pending notes
-$statement = $conn->prepare("SELECT note_id, title, note FROM note WHERE u_id = :u_id AND status = 'Pending'");
-$statement->bindValue(':u_id', $u_id);
-$statement->execute();
-$notes = $statement->fetchAll(PDO::FETCH_ASSOC);
 
-// completed notes
-$statement = $conn->prepare("SELECT title, note FROM note WHERE u_id = :u_id AND status = 'Completed'");
-$statement->bindValue(':u_id', $u_id);
-$statement->execute();
-$completedTasks = $statement->fetchAll(PDO::FETCH_ASSOC);
 
-//get folder
-$statement=$conn->prepare(("SELECT folder_name FROM folder_tbl WHERE u_id=:u_id"));
-$statement->bindValue(':u_id', $u_id);
-$statement->execute();
-$folders = $statement->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 
@@ -106,6 +101,7 @@ $folders = $statement->fetchAll(PDO::FETCH_ASSOC);
                     </div>
                 </div>
                 <h4>My List</h4>
+
                 <div class="dash-list-container">
     <?php if (!empty($notes)) { ?>
         <?php foreach ($notes as $note) { ?>
@@ -116,15 +112,14 @@ $folders = $statement->fetchAll(PDO::FETCH_ASSOC);
                 </div>
                 <div class="right-dash-list">
                     <p>Due Date: September 30, 2024</p><br>
-                
-                        <button type="button" class="complete-note-btn mark-complete-btn" data-note-id="<?php echo $note['note_id']; ?>">
+                     <button type="button" class="complete-note-btn mark-complete-btn" data-note-id="<?php echo $note['note_id']; ?>">
                             <i class='bx bx-check-circle'></i> 
-                        </button>
-                  
+                        </button> 
+
                         <button type="button" class="delete-note-btn" data-note-id="<?php echo $note['note_id']; ?>">
                             <i class='bx bxs-trash'></i>
-                        </button>
-               
+                        </button> 
+
                     <form method="GET" action="edit_note.php">
                         <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
                         <button type="submit">
@@ -135,9 +130,10 @@ $folders = $statement->fetchAll(PDO::FETCH_ASSOC);
             </div>
         <?php } ?>
     <?php } else { ?>
-        <p>No pending tasks available.</p>
+        <p>No tasks available.</p>
     <?php } ?>
 </div>
+
 
 
 
@@ -225,12 +221,10 @@ $folders = $statement->fetchAll(PDO::FETCH_ASSOC);
             </div>
    
             <section id="completed-task" style="display: none;">
-                <button type="button" id="delete-completed-btn" onclick="return confirm('Are you sure you want to delete all completed notes?');">
-                    <i class='bx bxs-trash'></i> Delete All
+                <button type="button" id="delete-completed-btn">
+                    <i class='bx bxs-trash'></i>
                 </button>
            
-
-     
                 <div class="completed-header">
                     <h3>Completed Tasks</h3>
                     <a href="javascript:void(0);" onclick="hideCompletedTask()">Close</a>
@@ -342,13 +336,9 @@ $folders = $statement->fetchAll(PDO::FETCH_ASSOC);
                         <<?php foreach ($notes as $note) { ?>
                 <div class="task-box">
                     <div class="check-task">
-                        <form method="POST" action="">
-                        <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
-                        <input type="hidden" name="status" value="completed">
-                        <button type="submit">
-                            <i class='bx bx-check-circle'></i>
+                    <button type="button" class="complete-note-btn mark-complete-btn" data-note-id="<?php echo $note['note_id']; ?>">
+                            <i class='bx bx-check-circle'></i> 
                         </button>
-                    </form>
                     </div>
                     <div class="task-box-top">
                         <h3><?php echo htmlspecialchars($note['title']); ?></h3>
@@ -359,14 +349,10 @@ $folders = $statement->fetchAll(PDO::FETCH_ASSOC);
                         <p>Due Date: September 30, 2024</p><br>
                         </div>
                         <div class="task-actions">
-                
-                            <form method="POST" action="">
-                                <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
-                                <input type="hidden" name="delete_note" value="true">
-                                <button type="submit" onclick="return confirm('Are you sure you want to delete this note?');">
-                                    <i class='bx bxs-trash'></i>
-                                </button>
-                            </form>
+            
+                  
+                        <button type="button" class="delete-note-btn" data-note-id="<?php echo $note['note_id']; ?>">
+                            <i class='bx bxs-trash'></i>
 
 
                             <form method="GET" action="edit_note.php">
