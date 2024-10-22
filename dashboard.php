@@ -1,59 +1,72 @@
 <?php
-    session_start();
-    include("include/connection.php");
-    include("include/getData.php");
-    include("include/createFolder.php");
+session_start();
+include("include/connection.php");
+include("include/classNote.php");
+include("include/classFolder.php");
 
+$username = $_SESSION['username'];
+$email = $_SESSION['email'];
+$name = isset($_SESSION['name']) ? $_SESSION['name'] : 'User'; 
+$u_id = $_SESSION['u_id'];  
 
-    $username = $_SESSION['username'];
-    $email = $_SESSION['email'];
-    $name = isset($_SESSION['name']) ? $_SESSION['name'] : 'User'; 
-    $u_id = $_SESSION['u_id'];  
+$noteManager = new NoteManager($conn, $u_id);
+$folderManager = new FolderManager($conn, $u_id);
 
-    $noteManager = new NoteManager($conn, $u_id);
+//folders
+$folders = $folderManager->getUserFolders();
 
-    $notes= $noteManager->getPendingNotes();
-    $completedTasks = $noteManager->getCompletedNotes();
-    $folders = $noteManager->getUserFolders();
-    
+//notes
+$notes = $noteManager->getPendingNotes();
+$completedTasks = $noteManager->getCompletedNotes();
+$folders = $noteManager->getUserFolders();
+
+if ($_SERVER['REQUEST_METHOD'] == "POST") {
     if (isset($_POST['addNote'])) {
-        if ($_SERVER['REQUEST_METHOD'] == "POST") {
-            $title = $_POST['title'];
-            $note = $_POST['note'];
+        $title = $_POST['title'];
+        $note = $_POST['note'];
+
+        if ($noteManager->addNote($title, $note)) {
+            header('Location: dashboard.php');
+            exit;
+        }
+        echo "<p>Failed to add note.</p>";
+    } elseif (isset($_POST['complete_note'])) {
+        $noteId = $_POST['note_id'];
+        
+        if ($noteManager->markNoteAsCompleted($noteId)) {
+            header('Location: dashboard.php');
+            exit();
+        }
+        echo "<p>Failed to mark the note as completed.</p>";
+    } elseif (isset($_POST['deleteNote'])) {
+        $noteId = $_POST['note_id'];
+
+        if ($noteManager->deleteNote($noteId)) {
+            header('Location: dashboard.php'); 
+            exit();
+        }
+        echo "<p>Failed to delete note.</p>";
+    } elseif (isset($_POST['deleteAllCompleted'])) {
+        if ($noteManager->deleteAllCompletedNotes()) {
+            header('Location: dashboard.php'); 
+            exit();
+        }
+        echo "<p>Failed to delete all completed notes.</p>";
+    } elseif(isset($_POST['createFolder'])) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $folderName = $_POST['folder_name'];
     
-            if ($noteManager->addNote($title, $note)) {
-                header('Location:"dashboard.php"');
-                exit;
+            if ($folderManager->createFolder($folderName)) {
+                header('Location: ' . $_SERVER['PHP_SELF']);
+                exit; 
             } else {
-                echo json_encode(['success' => false, 'message' => 'Failed to add note.']);
-                exit;
+                echo "<p>Failed to create folder.</p>";
             }
         }
     }
-
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['status']) && $_POST['status'] === 'completed') {
-        // Update the note status to completed
-        $noteId = $_POST['note_id'];
-        $stmt = $conn->prepare("UPDATE note SET status = 'Completed' WHERE note_id = :note_id AND u_id = :u_id");
-        $stmt->bindValue(':note_id', $noteId);
-        $stmt->bindValue(':u_id', $u_id);
-        $stmt->execute();
-    } elseif (isset($_POST['delete_note'])) {
-        // Delete the note
-        $noteId = $_POST['note_id'];
-        $stmt = $conn->prepare("DELETE FROM note WHERE note_id = :note_id AND u_id = :u_id");
-        $stmt->bindValue(':note_id', $noteId);
-        $stmt->bindValue(':u_id', $u_id);
-        $stmt->execute();
-    }
 }
-
-
-
-
 ?>
+
 
 
 <!DOCTYPE html>
@@ -112,13 +125,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <div class="right-dash-list">
                     <p>Due Date: September 30, 2024</p><br>
-                     <button type="button" class="complete-note-btn mark-complete-btn" data-note-id="<?php echo $note['note_id']; ?>">
-                            <i class='bx bx-check-circle'></i> 
-                        </button> 
+                    <form method="POST" action="dashboard.php">
+                        <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
+                        <button type="submit" name="complete_note" class="complete-note-btn mark-complete-btn">
+                            <i class='bx bx-check-circle'></i>
+                        </button>
+                    </form>
 
-                        <button type="button" class="delete-note-btn" data-note-id="<?php echo $note['note_id']; ?>">
+
+                    <form method="POST" action="dashboard.php" onsubmit="return confirm('Are you sure you want to delete this note?');">
+                        <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
+                        <button type="submit" class="delete-note-btn" name="deleteNote">
                             <i class='bx bxs-trash'></i>
-                        </button> 
+                        </button>
+                    </form>
+
 
                     <form method="GET" action="edit_note.php">
                         <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
@@ -192,20 +213,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </div>
                             <div class="right-dash-list">
                                 <p>Due Date: September 30, 2024</p><br>
-                                <form method="POST" action="">
+
+                                <form method="POST" action="dashboard.php">
                                     <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
-                                    <input type="hidden" name="status" value="completed">
-                                    <button type="submit">
+                                    <button type="submit" name="complete_note" class="complete-note-btn mark-complete-btn">
                                         <i class='bx bx-check-circle'></i>
                                     </button>
                                 </form>
-                                <form method="POST" action="">
-                                    <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
-                                    <input type="hidden" name="delete_note" value="true">
-                                    <button type="submit" onclick="return confirm('Are you sure you want to delete this note?');">
-                                        <i class='bx bxs-trash'></i>
-                                    </button>
-                                </form>
+
+                                    <form method="POST" action="dashboard.php" onsubmit="return confirm('Are you sure you want to delete this note?');">
+                                        <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
+                                        <button type="submit" class="delete-note-btn" name="deleteNote">
+                                            <i class='bx bxs-trash'></i>
+                                        </button>
+                                    </form>
+
                                 <form method="GET" action="edit_note.php">
                                     <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
                                     <button type="submit">
@@ -221,9 +243,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
    
             <section id="completed-task" style="display: none;">
-                <button type="button" id="delete-completed-btn">
-                    <i class='bx bxs-trash'></i>
-                </button>
+               <form method="POST" action="dashboard.php" onsubmit="return confirm('Are you sure you want to delete all completed notes?');">
+                    <button type="submit" id="delete-completed-btn" name="deleteAllCompleted">
+                        <i class='bx bxs-trash'></i>
+                    </button>
+                </form>
+
            
                 <div class="completed-header">
                     <h3>Completed Tasks</h3>

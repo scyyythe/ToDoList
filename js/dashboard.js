@@ -93,3 +93,12 @@ function hideCompletedTask() {
   document.body.classList.remove("show-popup");
 }
 
+//show folder
+document.querySelectorAll('.folder-icon').forEach(folder => {
+  folder.addEventListener('click', function() {
+      const folderId = this.getAttribute('data-folder-id');
+      // Logic to load folder content goes here
+      // For example, you can make an AJAX call to fetch tasks related to this folder
+      document.getElementById('folder-content').style.display = 'block';
+  });
+});
