@@ -1,3 +1,4 @@
+ 
  // Current Date and Time
  function getFormattedDate() {
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];

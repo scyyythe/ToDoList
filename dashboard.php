@@ -437,14 +437,15 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                         <li>Create Folders to organize lists</li>
                     </ul>
             
-                    <button onclick="window.location.href='payment.html'">Get Plan</button>
+                    <button onclick="window.location.href='payment.php'">Get Plan</button>
+
                 </div>
             </div>
             
         </section>
         
     </div>
-    <script src="js/api.js"></script>
+  
     <script src="js/dashboard.js">
         
     </script>

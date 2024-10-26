@@ -1,15 +1,29 @@
 <?php
-  include_once("connection.php");
-
-  $statement = $conn->prepare("SELECT * FROM accounts WHERE u_status = 'pending'");
-  $statement->execute();
-  $user = $statement->fetchAll(PDO::FETCH_ASSOC);
-
-  $statement = $conn->prepare("SELECT * FROM accounts WHERE u_status= 'active'");
-  $statement->execute();
-  $users = $statement->fetchAll(PDO::FETCH_ASSOC);
+  include_once("include/connection.php");
+  include("include/classAccounts.php");
 
 
+  $accountManager = new accountManage($conn);
+  $user = $accountManager->getPendingAccounts();
+  $users = $accountManager->getActiveAccounts();
+
+  if (isset($_POST['delete'])) {
+    $user_id = $_POST['u_id'];
+    
+    $deleteSuccess = $accountManager->deleteUser($user_id);
+    
+    if ($deleteSuccess) {
+       
+        header("Location: admin.php?message=User deleted successfully");
+        exit();
+    } 
+}
+$user_id = $_POST['u_id'];
+
+$accountManager = new accountManage($conn);
+
+// Update the user status to 'active'
+$isUpdated = $accountManager->updateUserStatus($user_id, 'active');
 
 ?>
 
@@ -93,7 +107,14 @@
                             <td><?php echo $user['u_name']?></td>
                             <td><?php echo $user['email']?></td>
                             <td><?php echo $user['u_status']?></td>
-                            <td> <button type="button" class="btn btn-primary btn-sm">Activate</button></td>
+                            <td>
+                                <form method="POST" >
+                                    <input type="hidden" name="u_id" value="<?php echo $user['u_id']; ?>">
+                                    <button type="submit" class="btn btn-primary btn-sm">Activate</button>
+                                </form>
+                            </td>
+
+
                           </tr>
                           <?php endforeach ?>
                         </tbody>
@@ -104,7 +125,7 @@
 
 
 
-        <!-- Manage -->
+
         <div class="container manage-con" id="manage-con">
            <h5><strong>Manage Users</strong></h5>
 
@@ -124,23 +145,32 @@
             
             <tbody>
 
-            <?php foreach($users as $i =>$users):?>
-              <tr>
-                  <th scope="row"><?php echo $i + 1; ?></th>
-                     <td><?php echo $users['u_id']?></td>
-                     <td><?php echo $users['u_name']?></td>
-                     <td><?php echo $user['email']?></td>
-                      <td><?php echo $user['plan']?></td>
-                    <td><?php echo $users['u_status']?></td>
+            <?php foreach ($users as $i => $user): ?>
+    <tr>
+        <th scope="row"><?php echo $i + 1; ?></th>
+        <td><?php echo $user['u_id']; ?></td>
+        <td><?php echo $user['u_name']; ?></td>
+        <td><?php echo $user['email']; ?></td>
+        <td><?php echo $user['plan']; ?></td>
+        <td><?php echo $user['u_status']; ?></td>
 
-                    <td>
-        <div class="edit-button"><a href="updateUser.php?<?php echo $users['u_id']?>" >Edit</a></div>
-                </td>
+        <td>
+            <div class="edit-button">
+                <a href="updateUser.php?u_id=<?php echo $user['u_id']; ?>">Edit</a>
+            </div>
+        </td>
 
-                <td><button type="button" class="btn btn-primary btn-delete">Delete</button></td>
-              </tr>
-              
-              <?php endforeach ?>
+        <td>
+          <form method="POST">
+              <input type="hidden" name="u_id" value="<?php echo $user['u_id']; ?>">
+              <button type="submit" class="btn btn-danger" name="delete">Delete</button>
+          </form>
+      </td>
+
+
+    </tr>
+<?php endforeach; ?>
+
       
             </tbody>
           </table>

@@ -33,7 +33,7 @@
             </div>
 
             <div class="right-container">
-                <img src="picture/TodoPic.jpg" alt="ToDo App Image">
+                <img src="img/picture/TodoPic.jpg" alt="ToDo App Image">
             </div>
         </div>
 

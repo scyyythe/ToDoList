@@ -19,6 +19,16 @@ class NoteManager {
         return $statement->execute();
     }
   
+    public function updateNote($noteId, $title, $note) {
+        $statement = $this->conn->prepare("UPDATE note SET title = :title, note = :note WHERE note_id = :note_id AND u_id = :u_id");
+        $statement->bindValue(':title', $title);
+        $statement->bindValue(':note', $note);
+        $statement->bindValue(':note_id', $noteId);
+        $statement->bindValue(':u_id', $this->u_id);
+        return $statement->execute();
+    }
+    
+
     public function getPendingNotes() {
         $statement = $this->conn->prepare("SELECT note_id, title, note FROM note WHERE u_id = :u_id AND status = 'Pending'");
         $statement->bindValue(':u_id', $this->u_id);
@@ -67,6 +77,8 @@ class NoteManager {
    
     
 }
+
+
 
 
 ?>
