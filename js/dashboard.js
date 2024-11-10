@@ -18,7 +18,7 @@
 
 document.getElementById('live-date').innerText = getFormattedDate();
 
-// Show All Tasks Section
+
 const allTaskLink = document.getElementById('allTask-link');
 const viewTaskContainer = document.getElementById('viewtaskContainer');
 
@@ -29,7 +29,7 @@ allTaskLink.addEventListener('click', function() {
   viewTaskContainer.style.display = 'block';
 });
 
-// Section Display Logic
+
 const dashboardLink = document.getElementById('dashboard-link');
 const myTaskLink = document.getElementById('my-task-link');
 const settingLink = document.getElementById('settings-link');
@@ -60,7 +60,7 @@ settingLink.addEventListener('click', function() {
   viewTaskContainer.style.display = 'none';
 });
 
-// Tab Switching Logic
+
 const tab1Button = document.getElementById('tab1-button');
 const tab2Button = document.getElementById('tab2-button');
 const tab1Content = document.getElementById('tab1-content');
@@ -83,7 +83,7 @@ function switchTab(tab) {
 tab1Button.addEventListener('click', () => switchTab('tab1'));
 tab2Button.addEventListener('click', () => switchTab('tab2'));
 
-// Show Completed Tasks
+
 function showCompletedTask() {
   document.getElementById("completed-task").style.display = "block";
   document.body.classList.add("show-popup");
@@ -94,12 +94,22 @@ function hideCompletedTask() {
   document.body.classList.remove("show-popup");
 }
 
-//show folder
 document.querySelectorAll('.folder-icon').forEach(folder => {
   folder.addEventListener('click', function() {
-      const folderId = this.getAttribute('data-folder-id');
-      // Logic to load folder content goes here
-      // For example, you can make an AJAX call to fetch tasks related to this folder
+      const folderId = this.getAttribute('data-folder-id');  
+      document.getElementById('folder-id').value = folderId;  // Set the folder ID in the hidden input field
+      console.log("Folder ID set to:", folderId);  // Debugging output
+      document.getElementById('folder-section').style.display = 'none';
       document.getElementById('folder-content').style.display = 'block';
   });
 });
+
+
+document.getElementById('back-btn').addEventListener('click', function() {
+    // Show the folder section
+    document.getElementById('folder-section').style.display = 'block';
+
+    // Hide the folder content section
+    document.getElementById('folder-content').style.display = 'none';
+});
+
