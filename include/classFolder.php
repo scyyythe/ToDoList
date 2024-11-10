@@ -14,6 +14,7 @@ class FolderManager {
             $statement = $this->connection->prepare("INSERT INTO folder_tbl (u_id, folder_name) VALUES (:u_id, :folder_name)");
             $statement->bindValue(':u_id', $this->userId);
             $statement->bindValue(':folder_name', $folderName);
+           
 
             return $statement->execute();
         }
