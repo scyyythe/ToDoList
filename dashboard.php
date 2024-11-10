@@ -10,6 +10,10 @@ $email = $_SESSION['email'];
 $name = isset($_SESSION['name']) ? $_SESSION['name'] : 'User'; 
 $u_id = $_SESSION['u_id'];  
 
+$accountInfo= new accountManage($conn,$u_id);
+$userPlan = $accountInfo->getUserPlan($username);
+
+
 $noteManager = new NoteManager($conn, $u_id);
 $folderManager = new FolderManager($conn, $u_id);
 
@@ -77,12 +81,29 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         } else {
             $_SESSION['error'] = "Failed to create folder.";
         }
-    }
+    }elseif (isset($_POST['createFolder'])) {
+        $folderName = $_POST['folder_name'];
+
+        if ($folderManager->createFolder($folderName)) {
+            header('Location: ' . $_SERVER['PHP_SELF']);
+            exit(); 
+        } else {
+            $_SESSION['error'] = "Failed to create folder.";
+        }
+    }elseif (isset($_POST['deleteFolder'])) {
+        $folder_id = $_POST['folder_id'];
+
+        if ($folderManager-> deleteFolder($folder_id)) {
+            header('Location: dashboard.php'); 
+            exit();
+        }
+        $_SESSION['error'] = "Failed to delete folder.";
+    } 
 }
 
 $userManager = new accountManage($conn);
 
-if ($_SERVER['REQUEST_METHOD'] == "POST") {
+if ($_SERVER['REQUEST_METHOD'] == "POST"&& isset($_POST['updateProfile'])) {
     $user_id = $_SESSION['u_id'];
     $name = $_POST['name'];
     $email = $_POST['email'];
@@ -161,7 +182,9 @@ $user = $userManager->getUserInfo($u_id);
                     <p><?php echo ($note['note']); ?></p>
                 </div>
                 <div class="right-dash-list">
-                    <p>Due Date: September 30, 2024</p><br>
+                    
+                <p>Due Date: <?php echo($note['due_date']); ?></p><br>
+
                     <form method="POST" action="dashboard.php">
                         <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
                         <button type="submit" name="complete_note" class="complete-note-btn mark-complete-btn">
@@ -249,7 +272,7 @@ $user = $userManager->getUserInfo($u_id);
                                 <p><?php echo($note['note']); ?></p>
                             </div>
                             <div class="right-dash-list">
-                                <p>Due Date: September 30, 2024</p><br>
+                                <p>Due Date:<?php echo($note['due_date']); ?></p><br>
 
                                 <form method="POST" action="dashboard.php">
                                     <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
@@ -304,7 +327,7 @@ $user = $userManager->getUserInfo($u_id);
                                     <p><?php echo($task['note']); ?></p>
                                 </div>
                                 <div class="right-dash-list">
-                                    <p>Due Date: September 30, 2024</p>
+                                   <p>Due Date:<?php echo($note['due_date']); ?></p><br>
                                 </div>
                             </div>
                         <?php } ?>
@@ -323,49 +346,53 @@ $user = $userManager->getUserInfo($u_id);
     <div class="tab-pane" id="tab2-content">
     <section id="folder-section">
     <h4>Organize your list!</h4><br>
+
+    <?php if ($userPlan == 'Basic'): ?>
+    <p>You need a Premium plan to create a folder.</p>
+  <?php else: ?>
     <h5>Create New Folder</h5>
-    <div class="add-folder">
-        <form id="add-folder-form" method="POST">
+    <form id="add-folder-form" class="add-folder" method="POST">
             <input type="text" id="folder-name" name="folder_name" placeholder="Add Folder" required />
             <button type="submit" name="createFolder">Add</button>
         </form>
-    </div>
 
     <hr />
+
     <div class="folders-container" id="folders-container">
         <?php
         if (!empty($folders)) {
             foreach ($folders as $folder) {
-                
                 echo '<div class="folder-icon" data-folder-id="' . $folder['folder_id'] . '">';
                 echo '<img src="img/icons8-folder-64.png" alt="">'; 
-                echo '<p>' . htmlspecialchars($folder['folder_name']) . '</p>'; 
+                echo '<p>' . ($folder['folder_name']) . '</p>'; 
                 echo '</div>';
             }
-        } else {
-            echo '<p>No folders found.</p>';
-        }
+        } 
         ?>
     </div>
+  <?php endif; ?>
+
 </section>
 
            
           
-          
         <section id="folder-content" style="display:none;">
     <div class="folder-header">
         <button id="back-btn">&larr; Back to Folders</button>
-        <button id="delete-folder-btn" class="delete-folder">Delete Folder</button>
-    </div>
 
+        <form method="POST" action="dashboard.php" id="delete-folder-form">
+            <input type="hidden" name="folder_id" value="<?php echo $folder['folder_id']; ?>"> <!-- Pass folder ID dynamically -->
+            <button type="button" id="delete-folder-btn" class="delete-folder" name="deleteFolder" onclick="confirmDelete()">Delete Folder</button>
+        </form>
+    </div>
+        
     <hr />
     <form method="POST" action="" enctype="multipart/form-data">
     <div id="add-task-form">
         <div class="right-task-form">
          
             <input type="text" id="task-title" placeholder="Note Title" name="title" required />
-            
-          
+ 
             <textarea id="task-description" placeholder="Note Description" name="note" required></textarea>
         </div>
 
@@ -387,7 +414,56 @@ $user = $userManager->getUserInfo($u_id);
 
 
     <hr />
-    <div id="task-list"></div>
+
+    <div class="all-task-container">
+
+            <div class="task-list">
+            
+                        <?php foreach ($notes as $note) { ?>
+                <div class="task-box">
+                    <div class="check-task">        
+                    <form method="POST" action="dashboard.php">
+                        <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
+                        <button type="submit" name="complete_note" class="complete-note-btn mark-complete-btn">
+                            <i class='bx bx-check-circle'></i>
+                        </button>
+                    </form>
+
+                    </div>
+                    <div class="task-box-top">
+                        <h3><?php echo ($note['title']); ?></h3>
+                        <p><?php echo ($note['note']); ?></p>
+                    </div>
+                    <div class="task-box-bottom">
+                        <div class="task-due">
+                        <p>Due Date: <?php echo($note['due_date']); ?></p><br>
+                        </div>
+                        <div class="task-actions">
+            
+                  
+                <form method="POST" action="dashboard.php" onsubmit="return confirm('Are you sure you want to delete this note?');">
+                    <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
+                    <button type="submit" class="delete-note-btn" name="deleteNote">
+                        <i class='bx bxs-trash'></i>
+                    </button>
+                </form>
+
+
+                <form method="GET" action="edit_note.php">
+                    <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
+                    <button type="submit">
+                        <i class='bx bxs-edit'></i>
+                    </button>
+                </form>
+                        </div>
+                    </div>
+                </div>
+            <?php } ?>
+
+            </div>
+                
+            
+            </div>
 </section>
 
     </div>
@@ -408,12 +484,16 @@ $user = $userManager->getUserInfo($u_id);
 
             <div class="task-list">
             
-                        <<?php foreach ($notes as $note) { ?>
+                        <?php foreach ($notes as $note) { ?>
                 <div class="task-box">
-                    <div class="check-task">
-                    <button type="button" class="complete-note-btn mark-complete-btn" data-note-id="<?php echo $note['note_id']; ?>">
-                            <i class='bx bx-check-circle'></i> 
+                    <div class="check-task">        
+                    <form method="POST" action="dashboard.php">
+                        <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
+                        <button type="submit" name="complete_note" class="complete-note-btn mark-complete-btn">
+                            <i class='bx bx-check-circle'></i>
                         </button>
+                    </form>
+
                     </div>
                     <div class="task-box-top">
                         <h3><?php echo ($note['title']); ?></h3>
@@ -421,21 +501,25 @@ $user = $userManager->getUserInfo($u_id);
                     </div>
                     <div class="task-box-bottom">
                         <div class="task-due">
-                        <p>Due Date: September 30, 2024</p><br>
+                        <p>Due Date: <?php echo($note['due_date']); ?></p><br>
                         </div>
                         <div class="task-actions">
             
                   
-                        <button type="button" class="delete-note-btn" data-note-id="<?php echo $note['note_id']; ?>">
-                            <i class='bx bxs-trash'></i>
+                <form method="POST" action="dashboard.php" onsubmit="return confirm('Are you sure you want to delete this note?');">
+                    <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
+                    <button type="submit" class="delete-note-btn" name="deleteNote">
+                        <i class='bx bxs-trash'></i>
+                    </button>
+                </form>
 
 
-                            <form method="GET" action="edit_note.php">
-                                <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
-                                <button type="submit">
-                                    <i class='bx bxs-edit'></i>
-                                </button>
-                            </form>
+                <form method="GET" action="edit_note.php">
+                    <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
+                    <button type="submit">
+                        <i class='bx bxs-edit'></i>
+                    </button>
+                </form>
                         </div>
                     </div>
                 </div>
@@ -455,6 +539,8 @@ $user = $userManager->getUserInfo($u_id);
             <h3>Account Information</h3>
 
             <div class="settings-information">
+            <h3>Update Your Profile</h3>
+            <p>Keep your account information up-to-date to enhance your experience on the platform.</p><br>
                 <form action="" method="POST">
                     <label for="name">Name</label><br>
                     <input type="text" name="name" value="<?php echo $user['u_name']; ?>"><br>
@@ -465,14 +551,12 @@ $user = $userManager->getUserInfo($u_id);
                     <label for="username">Username</label><br>
                     <input type="text" name="username" value="<?php echo $user['username']; ?>"><br>
 
-                    <label for="password">Password</label><br>
-                    <input type="password" name="password" placeholder="Enter new password"><br><br>
-
-                    <button type="submit" name="updateProfile">Edit Profile</button>
+                
+                    <button type="submit" name="updateProfile">Save Changes</button>
                 </form>
             </div>
 
-
+                            <br>
             <div class="settings-right">
                 <p>Account Status: <span><b>Basic</b></span></p>
             
@@ -501,6 +585,6 @@ $user = $userManager->getUserInfo($u_id);
     <script src="js/dashboard.js">
         
     </script>
-    
+
 </body>
 </html>

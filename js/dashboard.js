@@ -94,15 +94,17 @@ function hideCompletedTask() {
   document.body.classList.remove("show-popup");
 }
 
+//show folder
 document.querySelectorAll('.folder-icon').forEach(folder => {
   folder.addEventListener('click', function() {
-      const folderId = this.getAttribute('data-folder-id');  
-      document.getElementById('folder-id').value = folderId;  // Set the folder ID in the hidden input field
-      console.log("Folder ID set to:", folderId);  // Debugging output
+      const folderId = this.getAttribute('data-folder-id');  // Get folder ID
+      document.getElementById('folder-id').value = folderId;  
       document.getElementById('folder-section').style.display = 'none';
       document.getElementById('folder-content').style.display = 'block';
   });
 });
+
+
 
 
 document.getElementById('back-btn').addEventListener('click', function() {
@@ -113,3 +115,11 @@ document.getElementById('back-btn').addEventListener('click', function() {
     document.getElementById('folder-content').style.display = 'none';
 });
 
+function confirmDelete() {
+  const userConfirmation = confirm("Are you sure you want to delete this folder? This action cannot be undone.");
+
+  if (userConfirmation) {
+      // If the user confirmed, submit the form
+      document.getElementById("delete-folder-form").submit();
+  }
+}

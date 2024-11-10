@@ -8,12 +8,12 @@ class accountManage {
     }
 
   
-    public function updateUser($user_id, $name, $email, $username, $status, $plan, $password = null) {
-        $sql = "UPDATE accounts SET u_name = :name, email = :email, username = :username, u_status = :status, plan = :plan";
+    public function updateUser($user_id, $name, $email, $username, $password = null) {
+        $sql = "UPDATE accounts SET u_name = :name, email = :email, username = :username";
         
-        // If password is provided, include it in the update query
+      
         if ($password) {
-            $password = password_hash($password, PASSWORD_DEFAULT); // Hash the password
+            $password = password_hash($password, PASSWORD_DEFAULT); 
             $sql .= ", password = :password";
         }
 
@@ -23,11 +23,9 @@ class accountManage {
         $statement->bindValue(':name', $name);
         $statement->bindValue(':email', $email);
         $statement->bindValue(':username', $username);
-        $statement->bindValue(':status', $status);
-        $statement->bindValue(':plan', $plan);
         $statement->bindValue(':user_id', $user_id);
 
-        // Bind the password if it's provided
+        
         if ($password) {
             $statement->bindValue(':password', $password);
         }
@@ -69,6 +67,16 @@ class accountManage {
         $statement->execute();
         return $statement->fetch(PDO::FETCH_ASSOC);
     }
+
+    // Assuming $this->conn is your database connection
+
+public function getUserPlan($username) {
+    $statement = $this->conn->prepare("SELECT plan FROM accounts WHERE username = :username LIMIT 1");
+    $statement->bindValue(':username', $username);
+    $statement->execute();
+    $result = $statement->fetch(PDO::FETCH_ASSOC);
+    return $result ? $result['plan'] : 'Basic'; // Return 'Basic' if not found
+}
 
   
     

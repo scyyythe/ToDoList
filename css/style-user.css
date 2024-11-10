@@ -273,7 +273,7 @@ header ul li a:hover::after {
     
 }
 #tab2-content.active {
-    display: block; /* Show when active */
+    display: block; 
 }
 
 #tab1-content {
@@ -447,6 +447,7 @@ body.show-popup {
     gap: 20px; 
     padding: 20px;
     background-color: #f9f9f9; 
+  
 }
 
 .task-box {
@@ -660,6 +661,7 @@ body.show-popup {
   }
 
   .task-item {
+        
     background-color: #f0ecec;
     padding: 20px;
     border-radius: 10px;
@@ -810,7 +812,7 @@ body.show-popup {
     overflow: hidden;
 }
 .settings-information{
-    width: 30%;
+    width: 35%;
     padding: 20px;
     border-radius: 20px;
     line-height: 2;
@@ -821,7 +823,9 @@ body.show-popup {
         font-size: 13px;
         
     }
-
+    p{
+        font-size: 13px;
+    }
     input{
         width: 80%;
         padding:5px;
@@ -832,11 +836,12 @@ body.show-popup {
     }
 
     button{
+        margin-top: 2rem;
         padding: 5px;
         border-radius: 20px;
         border-style: none;
         font-size: 13px;
-        width: 100px;
+        width: 200px;
         background-color:rgb(38, 3, 102);
         color: white;
     }

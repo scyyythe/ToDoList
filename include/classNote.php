@@ -30,13 +30,12 @@ class NoteManager {
     
 
     public function getPendingNotes() {
-        $statement = $this->conn->prepare("SELECT note_id, title, note FROM note WHERE u_id = :u_id AND status = 'Pending'");
+        $statement = $this->conn->prepare("SELECT note_id, title, due_date,note,folder_id FROM note WHERE u_id = :u_id AND status = 'Pending'");
         $statement->bindValue(':u_id', $this->u_id);
         $statement->execute();
         return $statement->fetchAll(PDO::FETCH_ASSOC);
     }
-    
-
+   
     
     public function getCompletedNotes() {
         $statement = $this->conn->prepare("SELECT title, note FROM note WHERE u_id = :u_id AND status = 'Completed'");
@@ -106,7 +105,7 @@ class NoteManager {
             mkdir('uploads', 0777, true);
         }
 
-        // Handle file upload if a file is provided
+      
         $imagePath = '';
         if ($file && $file['tmp_name']) {
             $imagePath = 'uploads/' . $this->randomString(8) . '/' . $file['name'];
@@ -116,11 +115,11 @@ class NoteManager {
             move_uploaded_file($file['tmp_name'], $imagePath);
         }
 
-        // Default note status and user ID
+       
         $status = 'Pending';
         $u_id = $_SESSION['u_id'];
 
-        // Prepare the SQL query to insert the note into the database
+       
         $statement = $this->conn->prepare("INSERT INTO note (u_id, title, note, folder_id, image, due_date, status) 
                                           VALUES (:u_id, :title, :note, :folder_id, :image, :due_date, :status)");
 
