@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 18, 2024 at 03:10 PM
+-- Generation Time: Nov 10, 2024 at 04:17 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -43,10 +43,8 @@ CREATE TABLE `accounts` (
 --
 
 INSERT INTO `accounts` (`u_id`, `u_name`, `email`, `username`, `password`, `u_type`, `plan`, `u_status`) VALUES
-(41, 'Angel Canete', 'caneteangel@yahoo.com', 'angel', '$2y$10$k8Eg6ezWxJbG2uiIC/MDs.ugP6oB5AF45NRvAk51LHmAkBkP8VZCq', 'Admin', 'Basic', 'Active'),
-(42, 'Kyle Canete', 'kylecanete@gmail.om', 'kyle', '$2y$10$/Rf9jkKsandh.NO2DqT.4eKuqdHRcLpchDPcMi/9VY/xJPDgOqoUe', 'User', 'Basic', 'Active'),
-(43, 'Jamaica Anuba', 'jamaicaanuba@gmail.com', 'jai', '$2y$10$o5owZ8y3h07Vu23SW467tuxkVr14Z9jT7xLA4MTB0CXrEq2mXGC.O', 'User', 'Basic', 'Pending'),
-(44, 'Kyle Canete', 'lorencanete@yahoo.com', 'kyle', '$2y$10$GQ8XK9hmlL696.ZDrWZo0.KVddTDZQm8.DUK9tomqeC7bN/1/x5q2', 'User', 'Basic', 'Pending');
+(41, 'Angel Canetee', 'caneteangel@yahoo.com', 'angel', '$2y$10$k8Eg6ezWxJbG2uiIC/MDs.ugP6oB5AF45NRvAk51LHmAkBkP8VZCq', 'Admin', 'Basic', 'Activee'),
+(54, 'Jamaica Anuba', 'caneteange@mgial.com', 'jai', '$2y$10$qj/16n6dVcWJqwsBoc6zpOgi83zvJMeDdln8IgHqCTf/RXzzhIBBm', 'User', 'Premuim', 'active');
 
 -- --------------------------------------------------------
 
@@ -60,14 +58,6 @@ CREATE TABLE `folder_tbl` (
   `folder_name` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `folder_tbl`
---
-
-INSERT INTO `folder_tbl` (`folder_id`, `u_id`, `folder_name`) VALUES
-(18, 43, 'SIA'),
-(19, 43, 'multimedia');
-
 -- --------------------------------------------------------
 
 --
@@ -79,17 +69,25 @@ CREATE TABLE `note` (
   `u_id` int(100) NOT NULL,
   `title` varchar(50) NOT NULL,
   `note` text NOT NULL,
+  `folder_id` int(100) DEFAULT NULL,
   `image` varchar(255) NOT NULL,
   `due_date` date NOT NULL,
   `status` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
+
 --
--- Dumping data for table `note`
+-- Table structure for table `payment_tbl`
 --
 
-INSERT INTO `note` (`note_id`, `u_id`, `title`, `note`, `image`, `due_date`, `status`) VALUES
-(21, 43, 'ASDASD', 'ASDADS', '', '0000-00-00', 'Completed');
+CREATE TABLE `payment_tbl` (
+  `p_id` int(100) NOT NULL,
+  `u_id` int(100) NOT NULL,
+  `amount` int(100) NOT NULL,
+  `date_payment` date NOT NULL,
+  `status` varchar(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Indexes for dumped tables
@@ -113,6 +111,14 @@ ALTER TABLE `folder_tbl`
 --
 ALTER TABLE `note`
   ADD PRIMARY KEY (`note_id`),
+  ADD KEY `u_id` (`u_id`),
+  ADD KEY `folder_id` (`folder_id`);
+
+--
+-- Indexes for table `payment_tbl`
+--
+ALTER TABLE `payment_tbl`
+  ADD PRIMARY KEY (`p_id`),
   ADD KEY `u_id` (`u_id`);
 
 --
@@ -123,19 +129,25 @@ ALTER TABLE `note`
 -- AUTO_INCREMENT for table `accounts`
 --
 ALTER TABLE `accounts`
-  MODIFY `u_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
+  MODIFY `u_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
 
 --
 -- AUTO_INCREMENT for table `folder_tbl`
 --
 ALTER TABLE `folder_tbl`
-  MODIFY `folder_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `folder_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT for table `note`
 --
 ALTER TABLE `note`
-  MODIFY `note_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
+  MODIFY `note_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=94;
+
+--
+-- AUTO_INCREMENT for table `payment_tbl`
+--
+ALTER TABLE `payment_tbl`
+  MODIFY `p_id` int(100) NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables
@@ -151,7 +163,14 @@ ALTER TABLE `folder_tbl`
 -- Constraints for table `note`
 --
 ALTER TABLE `note`
-  ADD CONSTRAINT `note_ibfk_1` FOREIGN KEY (`u_id`) REFERENCES `accounts` (`u_id`);
+  ADD CONSTRAINT `note_ibfk_1` FOREIGN KEY (`u_id`) REFERENCES `accounts` (`u_id`),
+  ADD CONSTRAINT `note_ibfk_2` FOREIGN KEY (`folder_id`) REFERENCES `folder_tbl` (`folder_id`);
+
+--
+-- Constraints for table `payment_tbl`
+--
+ALTER TABLE `payment_tbl`
+  ADD CONSTRAINT `payment_tbl_ibfk_1` FOREIGN KEY (`u_id`) REFERENCES `accounts` (`u_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
