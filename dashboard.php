@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         $folderName = $_POST['folder_name'];
 
         if ($folderManager->createFolder($folderName)) {
-            header('Location: ' . $_SERVER['PHP_SELF']);
+            header('Location: dashboard.php'); 
             exit(); 
         } else {
             $_SESSION['error'] = "Failed to create folder.";
@@ -85,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         $folderName = $_POST['folder_name'];
 
         if ($folderManager->createFolder($folderName)) {
-            header('Location: ' . $_SERVER['PHP_SELF']);
+            header('Location: dashboard.php'); 
             exit(); 
         } else {
             $_SESSION['error'] = "Failed to create folder.";
@@ -327,7 +327,7 @@ $user = $userManager->getUserInfo($u_id);
                                     <p><?php echo($task['note']); ?></p>
                                 </div>
                                 <div class="right-dash-list">
-                                   <p>Due Date:<?php echo($note['due_date']); ?></p><br>
+                                   <p>Due Date:<?php echo($task['due_date']); ?></p><br>
                                 </div>
                             </div>
                         <?php } ?>

@@ -38,7 +38,7 @@ class NoteManager {
    
     
     public function getCompletedNotes() {
-        $statement = $this->conn->prepare("SELECT title, note FROM note WHERE u_id = :u_id AND status = 'Completed'");
+        $statement = $this->conn->prepare("SELECT title, note,due_date FROM note WHERE u_id = :u_id AND status = 'Completed'");
         $statement->bindValue(':u_id', $this->u_id);
         $statement->execute();
         return $statement->fetchAll(PDO::FETCH_ASSOC);
