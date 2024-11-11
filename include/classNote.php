@@ -8,29 +8,58 @@ class NoteManager {
         $this->u_id = $userId;
     }
 
-    public function addNote($title, $note) {
+    public function addNote($title, $note, $deadline) {
         $status = 'Pending';
-        $statement = $this->conn->prepare("INSERT INTO note (u_id, title, note, status) VALUES (:u_id, :title, :note, :status)");
+ 
+        $statement = $this->conn->prepare("INSERT INTO note (u_id, title, note, status, deadline) VALUES (:u_id, :title, :note, :status, :deadline)");
+    
         $statement->bindValue(':u_id', $this->u_id);
         $statement->bindValue(':title', $title);
         $statement->bindValue(':note', $note);
         $statement->bindValue(':status', $status);
-
+        $statement->bindValue(':deadline', $deadline);  
+    
         return $statement->execute();
     }
     
-    public function updateNote($noteId, $title, $note) {
-        $statement = $this->conn->prepare("UPDATE note SET title = :title, note = :note WHERE note_id = :note_id AND u_id = :u_id");
+    
+    public function updateNote($noteId, $title, $note, $deadline) {
+        $statement = $this->conn->prepare("UPDATE note SET title = :title, note = :note, deadline=:deadline WHERE note_id = :note_id AND u_id = :u_id");
         $statement->bindValue(':title', $title);
         $statement->bindValue(':note', $note);
+        $statement->bindValue(':deadline', $deadline);
         $statement->bindValue(':note_id', $noteId);
         $statement->bindValue(':u_id', $this->u_id);
         return $statement->execute();
     }
+    public function archivedNote($note_id) {
+        $status = 'deleted';  
+        $statement = $this->conn->prepare("UPDATE note SET status = :status WHERE note_id = :note_id");
+        $statement->bindValue(':status', $status);
+        $statement->bindValue(':note_id', $note_id);
+        
+        return $statement->execute();
+    }
     
-
+    public function restoreNote($note_id) {
+        $status = 'Pending';
+        $statement = $this->conn->prepare("UPDATE note SET status = :status WHERE note_id = :note_id AND u_id = :u_id");
+        $statement->bindValue(':status', $status);
+        $statement->bindValue(':note_id', $note_id);
+        $statement->bindValue(':u_id', $this->u_id);
+    
+        return $statement->execute();
+    }
+    
+    public function getDeletedNotes() {
+        $statement = $this->conn->prepare("SELECT * FROM note WHERE status = 'deleted' AND u_id = :u_id");
+        $statement->bindValue(':u_id', $this->u_id);
+        $statement->execute();
+    
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
+    }
     public function getPendingNotes() {
-        $statement = $this->conn->prepare("SELECT note_id, title, due_date,note,folder_id FROM note WHERE u_id = :u_id AND status = 'Pending'");
+        $statement = $this->conn->prepare("SELECT note_id, title,deadline,note,folder_id FROM note WHERE u_id = :u_id AND status = 'Pending'");
         $statement->bindValue(':u_id', $this->u_id);
         $statement->execute();
         return $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -38,7 +67,7 @@ class NoteManager {
    
     
     public function getCompletedNotes() {
-        $statement = $this->conn->prepare("SELECT title, note,due_date FROM note WHERE u_id = :u_id AND status = 'Completed'");
+        $statement = $this->conn->prepare("SELECT * FROM note WHERE u_id = :u_id AND status = 'Completed'");
         $statement->bindValue(':u_id', $this->u_id);
         $statement->execute();
         return $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -100,7 +129,7 @@ class NoteManager {
 
  
     public function uploadNote($file, $title, $note, $folder_id = null, $due_date = null) {
-        // Create uploads folder if it doesn't exist
+        
         if (!is_dir('uploads')) {
             mkdir('uploads', 0777, true);
         }
@@ -123,7 +152,7 @@ class NoteManager {
         $statement = $this->conn->prepare("INSERT INTO note (u_id, title, note, folder_id, image, due_date, status) 
                                           VALUES (:u_id, :title, :note, :folder_id, :image, :due_date, :status)");
 
-        // Bind the parameters to the query
+       
         $statement->bindValue(':u_id', $u_id);
         $statement->bindValue(':title', $title);
         $statement->bindValue(':note', $note);
@@ -132,7 +161,7 @@ class NoteManager {
         $statement->bindValue(':due_date', $due_date);
         $statement->bindValue(':status', $status);
 
-        // Execute the query and return the result
+        
         if ($statement->execute()) {
             return 'Note uploaded successfully!';
         } else {

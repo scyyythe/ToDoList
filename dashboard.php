@@ -22,6 +22,7 @@ $completedCount = $noteManager->getCompletedCount();
 
 $folders = $folderManager->getUserFolders();
 
+$deletedNotes=$noteManager->getDeletedNotes();
 $notes = $noteManager->getPendingNotes();
 $completedTasks = $noteManager->getCompletedNotes();
 
@@ -31,8 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     if (isset($_POST['addNote'])) {
         $title = $_POST['title'];
         $note = $_POST['note'];
-
-        if ($noteManager->addNote($title, $note)) {
+        $deadline = $_POST['deadline'];
+        if ($noteManager->addNote($title, $note,$deadline)) {
             header('Location: dashboard.php');
             exit;
         }
@@ -61,6 +62,14 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     } elseif (isset($_POST['deleteNote'])) {
         $noteId = $_POST['note_id'];
 
+        if ($noteManager->archivedNote($noteId)) {
+            header('Location: dashboard.php'); 
+            exit();
+        }
+        $_SESSION['error'] = "Failed to delete note.";
+    }elseif (isset($_POST['deletePermanent'])) {
+        $noteId = $_POST['note_id'];
+
         if ($noteManager->deleteNote($noteId)) {
             header('Location: dashboard.php'); 
             exit();
@@ -81,15 +90,6 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         } else {
             $_SESSION['error'] = "Failed to create folder.";
         }
-    }elseif (isset($_POST['createFolder'])) {
-        $folderName = $_POST['folder_name'];
-
-        if ($folderManager->createFolder($folderName)) {
-            header('Location: dashboard.php'); 
-            exit(); 
-        } else {
-            $_SESSION['error'] = "Failed to create folder.";
-        }
     }elseif (isset($_POST['deleteFolder'])) {
         $folder_id = $_POST['folder_id'];
 
@@ -98,7 +98,15 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
             exit();
         }
         $_SESSION['error'] = "Failed to delete folder.";
-    } 
+    }elseif (isset($_POST['restoreNote'])) {
+        $note_id = $_POST['note_id'];
+    
+        if ($noteManager->restoreNote($note_id)) { 
+            header('Location: dashboard.php?status=restored');
+            exit();
+        }
+        $_SESSION['error'] = "Failed to restore note.";
+    }
 }
 
 $userManager = new accountManage($conn);
@@ -122,6 +130,22 @@ if ($_SERVER['REQUEST_METHOD'] == "POST"&& isset($_POST['updateProfile'])) {
 $user = $userManager->getUserInfo($u_id);
 
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
+    if (isset($_POST['note_id'], $_POST['title'], $_POST['note'])) {
+        $note_id = $_POST['note_id'];
+        $title = $_POST['title'];
+        $noteContent = $_POST['note'];
+        $deadline=$_POST['deadline'];
+      
+        if ($noteManager->updateNote($note_id, $title, $noteContent, $deadline)) {
+            echo "Note updated successfully.";
+            header("Location: dashboard.php");
+            exit;
+        } else {
+            echo "Error updating the note.";
+        }
+    }
+}
 ?>
 
 
@@ -149,6 +173,15 @@ $user = $userManager->getUserInfo($u_id);
     </header>
 
     <div class="wrapper">
+        
+        <div id="notePopup" class="note-popup">
+        <div class="note-popup-content">
+            <span class="close-popup" onclick="closePopup()">&times;</span>
+            <h3 id="popupTitle"></h3>
+            <p id="popupNote"></p><br>
+            <p>Remaining Time: <span id="popupCountdown"></span></p>
+        </div>
+    </div>
         <section id="dashboard">
             <p id="live-date"></p>
 
@@ -173,17 +206,23 @@ $user = $userManager->getUserInfo($u_id);
                 </div>
        <h4>My List</h4>
 
-                <div class="dash-list-container">
+      <div class="dash-list-container">
     <?php if (!empty($notes)) { ?>
         <?php foreach ($notes as $note) { ?>
             <div class="dash-list">
-                <div class="left-dash-list">
-                    <h3><?php echo ($note['title']); ?></h3><br>
-                    <p><?php echo ($note['note']); ?></p>
+                <div class="left-dash-list"  onclick="showPopup('<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>')">
+                    <h3><?php echo($note['title']); ?></h3><br>
+                    <p>
+                        <?php 
+                            $words = explode(' ', $note['note']); 
+                            $limitedWords = array_slice($words, 0, 30);
+                            echo implode(' ', $limitedWords);
+                            if (count($words) > 30) echo '...'; 
+                        ?>
+                    </p>
                 </div>
                 <div class="right-dash-list">
-                    
-                <p>Due Date: <?php echo($note['due_date']); ?></p><br>
+                <p>Deadline: <span class="countdown" data-deadline="<?php echo $note['deadline']; ?>"></span></p><br>
 
                     <form method="POST" action="dashboard.php">
                         <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
@@ -192,7 +231,6 @@ $user = $userManager->getUserInfo($u_id);
                         </button>
                     </form>
 
-
                     <form method="POST" action="dashboard.php" onsubmit="return confirm('Are you sure you want to delete this note?');">
                         <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
                         <button type="submit" class="delete-note-btn" name="deleteNote">
@@ -200,26 +238,50 @@ $user = $userManager->getUserInfo($u_id);
                         </button>
                     </form>
 
+                   <form method="POST" action="#" onsubmit="event.preventDefault(); openModal('<?php echo addslashes($note['note_id']); ?>', '<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>')">
+    <button type="submit">
+        <i class='bx bxs-edit'></i>
+    </button>
+</form>
 
-                    <form method="GET" action="edit_note.php">
-                        <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
-                        <button type="submit">
-                            <i class='bx bxs-edit'></i>
-                        </button>
-                    </form>
                 </div>
             </div>
         <?php } ?>
     <?php } else { ?>
-        <p>No tasks available.</p>
+        <p>No pending tasks available.</p>
     <?php } ?>
 </div>
 
 
-
-
             </div>
         </section>
+        
+<div id="popupOverlay" class="popup-overlay">
+    
+    <div id="editNoteModal" class="edit-note-container">
+       
+        <span class="close-modal" onclick="closeModal()">×</span>
+        <h1>Edit Note</h1>
+        <form method="POST" action="">
+
+            <input type="hidden" name="note_id" value="<?php echo htmlspecialchars($note['note_id']); ?>">
+
+            <label for="title">Title</label>
+            <input type="text" id="title" name="title" value="<?php echo htmlspecialchars($note['title']); ?>" required>
+
+            <label for="note">Note</label>
+            <textarea id="note" name="note" rows="5" required><?php echo htmlspecialchars($note['note']); ?></textarea>
+
+            <label for="deadline">Deadline</label>
+            <input type="time" id="modalDeadline" name="deadline" value="<?php echo date('H:i', strtotime($note['deadline'])); ?>" required>
+
+            <br>
+            <button type="submit" name="editNote">Save Changes</button>
+            <a href="javascript:void(0);" class="cancel-button" onclick="closeModal()">Cancel</a>
+        </form>
+    </div>
+</div>
+
 
         <section id="my-task" style="display: none;">
 
@@ -242,17 +304,30 @@ $user = $userManager->getUserInfo($u_id);
         <div class="inside-tab-pane">
             <div class="left-tab">
             <form id="noteForm" method="POST">
+
+            <div class="upper-tab"> 
+
+            <div class="title-tab">
                 <label for="title">Title</label><br>
                 <input type="text" name="title" placeholder="Title" required><br>
-
+            </div>
+                
+            <div class="deadline-tab">
+                <label for="deadline">Set Deadline</label><br>
+                <input type="time" name="deadline" required><br>
+            </div>
+            
+            </div>
+               
+                
                 <label for="note">Note</label><br>
                 <textarea name="note" id="to-do-note" placeholder="Add your note" required></textarea><br>
 
                 <button type="submit" name="addNote">Add Note</button> 
             </form>
 
-
             </div>
+          
         </div>
 
         <hr>
@@ -261,47 +336,94 @@ $user = $userManager->getUserInfo($u_id);
             <div class="tab1-head-list">
                 <h3>My List</h3>
                 <a href="javascript:void(0);" onclick="showCompletedTask()">View Completed</a>
+                <a class="viewTrashbtn" onclick="showTrashPopup()">View Trash</a>
             </div>
 
             <div class="dash-list-container">
-                <?php if (!empty($notes)) { ?>
-                    <?php foreach ($notes as $note) { ?>
-                        <div class="dash-list">
-                            <div class="left-dash-list">
-                                <h3><?php echo($note['title']); ?></h3><br>
-                                <p><?php echo($note['note']); ?></p>
-                            </div>
-                            <div class="right-dash-list">
-                                <p>Due Date:<?php echo($note['due_date']); ?></p><br>
+    <?php if (!empty($notes)) { ?>
+        <?php foreach ($notes as $note) { ?>
+            <div class="dash-list">
+                <div class="left-dash-list"  onclick="showPopup('<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>')">
+                    <h3><?php echo($note['title']); ?></h3><br>
+                    <p>
+                        <?php 
+                            $words = explode(' ', $note['note']); 
+                            $limitedWords = array_slice($words, 0, 30);
+                            echo implode(' ', $limitedWords);
+                            if (count($words) > 30) echo '...'; 
+                        ?>
+                    </p>
+                </div>
+                <div class="right-dash-list">
+                <p>Deadline: <span class="countdown" data-deadline="<?php echo $note['deadline']; ?>"></span></p><br>
 
-                                <form method="POST" action="dashboard.php">
-                                    <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
-                                    <button type="submit" name="complete_note" class="complete-note-btn mark-complete-btn">
-                                        <i class='bx bx-check-circle'></i>
-                                    </button>
-                                </form>
+                    <form method="POST" action="dashboard.php">
+                        <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
+                        <button type="submit" name="complete_note" class="complete-note-btn mark-complete-btn">
+                            <i class='bx bx-check-circle'></i>
+                        </button>
+                    </form>
 
-                                    <form method="POST" action="dashboard.php" onsubmit="return confirm('Are you sure you want to delete this note?');">
-                                        <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
-                                        <button type="submit" class="delete-note-btn" name="deleteNote">
-                                            <i class='bx bxs-trash'></i>
-                                        </button>
-                                    </form>
+                    <form method="POST" action="dashboard.php" onsubmit="return confirm('Are you sure you want to delete this note?');">
+                        <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
+                        <button type="submit" class="delete-note-btn" name="deleteNote">
+                            <i class='bx bxs-trash'></i>
+                        </button>
+                    </form>
 
-                                <form method="GET" action="edit_note.php">
-                                    <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
-                                    <button type="submit">
-                                        <i class='bx bxs-edit'></i>
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    <?php } ?>
-                <?php } else { ?>
-                    <p>No pending tasks available.</p>
-                <?php } ?>
+                   <form method="POST" action="#" onsubmit="event.preventDefault(); openModal('<?php echo addslashes($note['note_id']); ?>', '<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>')">
+    <button type="submit">
+        <i class='bx bxs-edit'></i>
+    </button>
+</form>
+
+                </div>
             </div>
-   
+        <?php } ?>
+    <?php } else { ?>
+        <p>No pending tasks available.</p>
+    <?php } ?>
+</div>
+
+<div id="trashContainerOverlay" onclick="closeTrashPopup()"></div>
+
+<div id="trashContainer">
+    <h3>Trash - Deleted Notes</h3>
+    <?php if (!empty($deletedNotes)) { ?>
+        <?php foreach ($deletedNotes as $note) { ?>
+            <div class="trash-item">
+                <h4><?php echo $note['title']; ?></h4>
+                <p>
+                        <?php 
+                            $words = explode(' ', $note['note']); 
+                            $limitedWords = array_slice($words, 0, 30);
+                            echo implode(' ', $limitedWords);
+                            if (count($words) > 30) echo '...'; 
+                        ?>
+                    </p>
+                
+                    <div class="btnTrash">
+                        <form method="POST" action="">
+                            <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
+                            <button type="submit" class="restoreNote" name="restoreNote">Restore</button>
+                        </form>
+
+                        <form method="POST" action="" onsubmit="return confirm('Are you sure you want to delete this note?');">
+                            <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
+                            <button type="submit" name="deletePermanent">Delete</button>
+                        </form>
+                    </div>
+
+              
+            </div>
+        <?php } ?>
+    <?php } else { ?>
+        <p>No deleted notes available.</p>
+    <?php } ?>
+</div>
+
+
+
             <section id="completed-task" style="display: none;">
                <form method="POST" action="dashboard.php" onsubmit="return confirm('Are you sure you want to delete all completed notes?');">
                     <button type="submit" id="delete-completed-btn" name="deleteAllCompleted">
@@ -319,22 +441,36 @@ $user = $userManager->getUserInfo($u_id);
 
                 </div>
                 <div class="dash-list-container">
-                    <?php if (!empty($completedTasks)) { ?>
-                        <?php foreach ($completedTasks as $task) { ?>
-                            <div class="dash-list">
-                                <div class="left-dash-list">
-                                    <h3><?php echo($task['title']); ?></h3>
-                                    <p><?php echo($task['note']); ?></p>
-                                </div>
-                                <div class="right-dash-list">
-                                   <p>Due Date:<?php echo($task['due_date']); ?></p><br>
-                                </div>
-                            </div>
-                        <?php } ?>
-                    <?php } else { ?>
-                        <p>No completed tasks available.</p>
-                    <?php } ?>
+    <?php if (!empty($completedTasks)) { ?>
+
+        <?php foreach ($completedTasks as $task) { ?>
+            <div class="dash-list" onclick="showPopup('<?php echo addslashes($task['title']); ?>', '<?php echo addslashes($task['note']); ?>', '<?php echo $task['due_date']; ?>')">
+                <div class="left-dash-list">
+                    <h3><?php echo($task['title']); ?></h3>
+                    <p>
+                        <?php 
+                            $words = explode(' ', $task['note']); 
+                            $limitedWords = array_slice($words, 0, 30);
+                            echo implode(' ', $limitedWords);
+                            if (count($words) > 30) echo '...'; 
+                        ?>
+                    </p>
                 </div>
+                <div class="right-dash-list">
+                   
+                <form method="POST" action="">
+                    <input type="hidden" name="note_id" value="<?php echo $task['note_id']; ?>">
+                    <button type="submit" class="restore-task-btn" name="restoreNote">Restore</button>
+                </form>
+
+                </div>
+            </div>
+        <?php } ?>
+    <?php } else { ?>
+        <p>No completed tasks available.</p>
+    <?php } ?>
+</div>
+
 
             </section>
 
@@ -381,7 +517,7 @@ $user = $userManager->getUserInfo($u_id);
         <button id="back-btn">&larr; Back to Folders</button>
 
         <form method="POST" action="dashboard.php" id="delete-folder-form">
-            <input type="hidden" name="folder_id" value="<?php echo $folder['folder_id']; ?>"> <!-- Pass folder ID dynamically -->
+            <input type="hidden" name="folder_id" value="<?php echo $folder['folder_id']; ?>"> 
             <button type="button" id="delete-folder-btn" class="delete-folder" name="deleteFolder" onclick="confirmDelete()">Delete Folder</button>
         </form>
     </div>
@@ -420,8 +556,8 @@ $user = $userManager->getUserInfo($u_id);
             <div class="task-list">
             
                         <?php foreach ($notes as $note) { ?>
-                <div class="task-box">
-                    <div class="check-task">        
+                <div class="task-box" onclick="showPopup('<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>')">  >
+                    <div class="check-task">      
                     <form method="POST" action="dashboard.php">
                         <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
                         <button type="submit" name="complete_note" class="complete-note-btn mark-complete-btn">
@@ -432,11 +568,18 @@ $user = $userManager->getUserInfo($u_id);
                     </div>
                     <div class="task-box-top">
                         <h3><?php echo ($note['title']); ?></h3>
-                        <p><?php echo ($note['note']); ?></p>
+                        <p>
+                        <?php 
+                            $words = explode(' ', $note['note']); 
+                            $limitedWords = array_slice($words, 0, 30);
+                            echo implode(' ', $limitedWords);
+                            if (count($words) > 30) echo '...'; 
+                        ?>
+                    </p>
                     </div>
                     <div class="task-box-bottom">
                         <div class="task-due">
-                        <p>Due Date: <?php echo($note['due_date']); ?></p><br>
+                        <p>Deadline: <span class="countdown" data-deadline="<?php echo $note['deadline']; ?>"></span></p><br>
                         </div>
                         <div class="task-actions">
             
@@ -449,12 +592,11 @@ $user = $userManager->getUserInfo($u_id);
                 </form>
 
 
-                <form method="GET" action="edit_note.php">
-                    <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
-                    <button type="submit">
-                        <i class='bx bxs-edit'></i>
-                    </button>
-                </form>
+                <form method="POST" action="#" onsubmit="event.preventDefault(); openModal('<?php echo addslashes($note['note_id']); ?>', '<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>')">
+    <button type="submit">
+        <i class='bx bxs-edit'></i>
+    </button>
+</form>
                         </div>
                     </div>
                 </div>
@@ -486,7 +628,7 @@ $user = $userManager->getUserInfo($u_id);
             
                         <?php foreach ($notes as $note) { ?>
                 <div class="task-box">
-                    <div class="check-task">        
+                    <div class="check-task" onclick="showPopup('<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>')">      
                     <form method="POST" action="dashboard.php">
                         <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
                         <button type="submit" name="complete_note" class="complete-note-btn mark-complete-btn">
@@ -497,11 +639,18 @@ $user = $userManager->getUserInfo($u_id);
                     </div>
                     <div class="task-box-top">
                         <h3><?php echo ($note['title']); ?></h3>
-                        <p><?php echo ($note['note']); ?></p>
+                        <p>
+                        <?php 
+                            $words = explode(' ', $note['note']); 
+                            $limitedWords = array_slice($words, 0, 30);
+                            echo implode(' ', $limitedWords);
+                            if (count($words) > 30) echo '...'; 
+                        ?>
+                    </p>
                     </div>
                     <div class="task-box-bottom">
                         <div class="task-due">
-                        <p>Due Date: <?php echo($note['due_date']); ?></p><br>
+                        <p>Deadline: <span class="countdown" data-deadline="<?php echo $note['deadline']; ?>"></span></p><br>
                         </div>
                         <div class="task-actions">
             
@@ -514,12 +663,11 @@ $user = $userManager->getUserInfo($u_id);
                 </form>
 
 
-                <form method="GET" action="edit_note.php">
-                    <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
-                    <button type="submit">
-                        <i class='bx bxs-edit'></i>
-                    </button>
-                </form>
+                <form method="POST" action="#" onsubmit="event.preventDefault(); openModal('<?php echo addslashes($note['note_id']); ?>', '<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>')">
+    <button type="submit">
+        <i class='bx bxs-edit'></i>
+    </button>
+</form>
                         </div>
                     </div>
                 </div>
@@ -585,6 +733,42 @@ $user = $userManager->getUserInfo($u_id);
     <script src="js/dashboard.js">
         
     </script>
+    <script>
+           function formatTime(seconds) {
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        const secs = seconds % 60;
+        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
 
+  
+    function updateCountdown() {
+        const countdownElements = document.querySelectorAll('.countdown');
+
+        countdownElements.forEach(function(element) {
+            
+            const deadlineTime = element.getAttribute('data-deadline');  
+            const currentTime = new Date();
+            const deadlineParts = deadlineTime.split(':');
+            const deadlineDate = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate(), deadlineParts[0], deadlineParts[1], deadlineParts[2]);
+
+         
+            const timeDifference = Math.floor((deadlineDate - currentTime) / 1000);
+
+            if (timeDifference > 0) {
+                
+                element.textContent = formatTime(timeDifference);
+            } else {
+                element.textContent = "Time's up!";
+            }
+        });
+    }
+
+    
+    setInterval(updateCountdown, 1000);
+
+    
+    updateCountdown();
+    </script>
 </body>
 </html>

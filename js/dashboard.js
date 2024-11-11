@@ -21,15 +21,6 @@ document.getElementById('live-date').innerText = getFormattedDate();
 
 const allTaskLink = document.getElementById('allTask-link');
 const viewTaskContainer = document.getElementById('viewtaskContainer');
-
-allTaskLink.addEventListener('click', function() {
-  dashboardSection.style.display = 'none';
-  myTaskSection.style.display = 'none';
-  settingsSection.style.display = 'none';
-  viewTaskContainer.style.display = 'block';
-});
-
-
 const dashboardLink = document.getElementById('dashboard-link');
 const myTaskLink = document.getElementById('my-task-link');
 const settingLink = document.getElementById('settings-link');
@@ -38,7 +29,24 @@ const dashboardSection = document.getElementById('dashboard');
 const myTaskSection = document.getElementById('my-task');
 const settingsSection = document.getElementById('settings');
 
+function clearActiveLinks() {
+  dashboardLink.classList.remove('active');
+  myTaskLink.classList.remove('active');
+  settingLink.classList.remove('active');
+}
+
+allTaskLink.addEventListener('click', function() {
+  clearActiveLinks();
+  allTaskLink.classList.add('active');
+  dashboardSection.style.display = 'none';
+  myTaskSection.style.display = 'none';
+  settingsSection.style.display = 'none';
+  viewTaskContainer.style.display = 'block';
+});
+
 myTaskLink.addEventListener('click', function() {
+  clearActiveLinks();
+  myTaskLink.classList.add('active');
   dashboardSection.style.display = 'none';
   myTaskSection.style.display = 'block';
   settingsSection.style.display = 'none';
@@ -47,6 +55,8 @@ myTaskLink.addEventListener('click', function() {
 });
 
 dashboardLink.addEventListener('click', function() {
+  clearActiveLinks();
+  dashboardLink.classList.add('active');
   dashboardSection.style.display = 'block';
   myTaskSection.style.display = 'none';
   settingsSection.style.display = 'none';
@@ -54,6 +64,8 @@ dashboardLink.addEventListener('click', function() {
 });
 
 settingLink.addEventListener('click', function() {
+  clearActiveLinks();
+  settingLink.classList.add('active');
   dashboardSection.style.display = 'none';
   myTaskSection.style.display = 'none';
   settingsSection.style.display = 'block';
@@ -84,15 +96,16 @@ tab1Button.addEventListener('click', () => switchTab('tab1'));
 tab2Button.addEventListener('click', () => switchTab('tab2'));
 
 
+// Show the completed tasks section
 function showCompletedTask() {
-  document.getElementById("completed-task").style.display = "block";
-  document.body.classList.add("show-popup");
+  document.getElementById('completed-task').style.display = 'block';
 }
 
+// Hide the completed tasks section
 function hideCompletedTask() {
-  document.getElementById("completed-task").style.display = "none";
-  document.body.classList.remove("show-popup");
+  document.getElementById('completed-task').style.display = 'none';
 }
+
 
 //show folder
 document.querySelectorAll('.folder-icon').forEach(folder => {
@@ -122,5 +135,68 @@ function confirmDelete() {
       
       document.getElementById("delete-folder-form").submit();
   }
+}
+
+// pop up note
+function showPopup(title, note, dueTime) {
+
+  document.getElementById('popupTitle').innerText = title;
+  document.getElementById('popupNote').innerText = note;
+
+  
+  let [hours, minutes, seconds] = dueTime.split(':').map(Number);
+
+  
+  let currentDate = new Date();
+  let deadlineDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), hours, minutes, seconds);
+
+
+  let timerInterval = setInterval(function() {
+      let now = new Date();
+      let timeRemaining = deadlineDate - now;
+
+      if (timeRemaining <= 0) {
+          clearInterval(timerInterval); 
+          document.getElementById('popupCountdown').innerText = "Deadline reached!";
+      } else {
+          let hoursLeft = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          let minutesLeft = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+          let secondsLeft = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+          
+         
+          document.getElementById('popupCountdown').innerText = hoursLeft + "h " + minutesLeft + "m " + secondsLeft + "s ";
+      }
+  }, 1000); 
+
+
+  document.getElementById('notePopup').style.display = 'block';
+}
+
+function closePopup() {
+  document.getElementById('notePopup').style.display = 'none';
+}
+
+
+//pop up trash can
+function showTrashPopup() {
+    document.getElementById('trashContainer').style.display = 'block';
+    document.getElementById('trashContainerOverlay').style.display = 'block';
+}
+
+function closeTrashPopup() {
+    document.getElementById('trashContainer').style.display = 'none';
+    document.getElementById('trashContainerOverlay').style.display = 'none';
+}
+
+// Function to open the modal
+function openModal() {
+  document.getElementById('popupOverlay').style.display = 'block';
+  document.getElementById('editNoteModal').style.display = 'block';
+}
+
+// Function to close the modal
+function closeModal() {
+  document.getElementById('popupOverlay').style.display = 'none';
+  document.getElementById('editNoteModal').style.display = 'none';
 }
 
