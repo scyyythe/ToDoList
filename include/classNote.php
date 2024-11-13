@@ -128,7 +128,7 @@ class NoteManager {
     }
 
  
-    public function uploadNote($file, $title, $note, $folder_id = null, $due_date = null) {
+    public function uploadNote($file, $title, $note, $folder_id = null, $deadline = null) {
         
         if (!is_dir('uploads')) {
             mkdir('uploads', 0777, true);
@@ -149,8 +149,8 @@ class NoteManager {
         $u_id = $_SESSION['u_id'];
 
        
-        $statement = $this->conn->prepare("INSERT INTO note (u_id, title, note, folder_id, image, due_date, status) 
-                                          VALUES (:u_id, :title, :note, :folder_id, :image, :due_date, :status)");
+        $statement = $this->conn->prepare("INSERT INTO note (u_id, title, note, folder_id, image, deadline, status) 
+                                          VALUES (:u_id, :title, :note, :folder_id, :image, :deadline, :status)");
 
        
         $statement->bindValue(':u_id', $u_id);
@@ -158,7 +158,7 @@ class NoteManager {
         $statement->bindValue(':note', $note);
         $statement->bindValue(':folder_id', $folder_id);
         $statement->bindValue(':image', $imagePath);
-        $statement->bindValue(':due_date', $due_date);
+        $statement->bindValue(':deadline', $deadline);
         $statement->bindValue(':status', $status);
 
         

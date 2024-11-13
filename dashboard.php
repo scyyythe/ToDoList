@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         $title = $_POST['title'];
         $note = $_POST['note'];
         $folder_id = !empty($_POST['folder-id']) ? $_POST['folder-id'] : null;
-        $due_date = $_POST['task-due-date'];
+        $due_date = $_POST['deadline'];
         $image = isset($_FILES['task-image']) ? $_FILES['task-image'] : null;
 
 
@@ -444,8 +444,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
     <?php if (!empty($completedTasks)) { ?>
 
         <?php foreach ($completedTasks as $task) { ?>
-            <div class="dash-list" onclick="showPopup('<?php echo addslashes($task['title']); ?>', '<?php echo addslashes($task['note']); ?>', '<?php echo $task['due_date']; ?>')">
-                <div class="left-dash-list">
+            <div class="dash-list" >
+                <div class="left-dash-list" onclick="showPopup('<?php echo addslashes($task['title']); ?>', '<?php echo addslashes($task['note']); ?>', '<?php echo $task['deadline']; ?>')">
                     <h3><?php echo($task['title']); ?></h3>
                     <p>
                         <?php 
@@ -533,8 +533,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
         </div>
 
         <div class="due-date-task-form">
-            <label for="due-date-folder">Deadline</label><br>
-            <input type="date" id="task-due-date" name="task-due-date" required /><br>
+        <div class="deadline-tab">
+                <label for="deadline">Set Deadline</label><br>
+                <input type="time" name="deadline" required><br>
+            </div>
             <label for="image-note">Upload Image</label><br>
             <input type="file" id="task-image" name="task-image" accept="image/*"><br>
         </div>
@@ -556,8 +558,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
             <div class="task-list">
             
                         <?php foreach ($notes as $note) { ?>
-                <div class="task-box" onclick="showPopup('<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>')">  >
-                    <div class="check-task">      
+                <div class="task-box" onclick="showPopup('<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>')"> >
+                    <div class="check-task" >      
                     <form method="POST" action="dashboard.php">
                         <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
                         <button type="submit" name="complete_note" class="complete-note-btn mark-complete-btn">
