@@ -59,7 +59,7 @@ class NoteManager {
         return $statement->fetchAll(PDO::FETCH_ASSOC);
     }
     public function getPendingNotes() {
-        $statement = $this->conn->prepare("SELECT note_id, title,deadline,image,note,folder_id FROM note WHERE u_id = :u_id AND status = 'Pending'");
+        $statement = $this->conn->prepare("SELECT note_id, title,deadline,note, image,folder_id FROM note WHERE u_id = :u_id AND status = 'Pending'");
         $statement->bindValue(':u_id', $this->u_id);
         $statement->execute();
         return $statement->fetchAll(PDO::FETCH_ASSOC);

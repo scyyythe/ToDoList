@@ -182,7 +182,7 @@ header ul li a.active::after {
 }
  .rightPop{
     width: 70%;
-  
+    padding: 20px;
 }
 .leftPop{
     width: 30%;
@@ -207,12 +207,15 @@ header ul li a.active::after {
     
 }
 .left-dash-list{
-
-    width: 85%;
+  
+    width: 80%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+
+   
 }
+
 .right-dash-list{
     display: flex;
     align-items: center;

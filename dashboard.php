@@ -213,33 +213,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
                 </div>
        <h4>My List</h4>
 
-      <div class="dash-list-container">
+       <div class="dash-list-container">
     <?php if (!empty($notes)) { ?>
         <?php foreach ($notes as $note) { ?>
             <div class="dash-list">
-            <div class="left-dash-list" onclick="showPopup('<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>', '<?php echo htmlspecialchars($note['image'], ENT_QUOTES); ?>')">
+                <div class="left-dash-list" onclick="showPopup('<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>', '<?php echo htmlspecialchars($note['image'], ENT_QUOTES); ?>')">
+                    <div class="imageDisplay">
+                        <?php if (!empty($note['image'])): ?>
+                            <img src="<?php echo htmlspecialchars($note['image']); ?>" alt="<?php echo htmlspecialchars($note['title']); ?>" >
+                        <?php endif; ?>
+                    </div>
 
-    
-    <div class="imageDisplay">
-        <?php if (!empty($note['image'])): ?>
-            <img src="<?php echo htmlspecialchars($note['image'], ENT_QUOTES); ?>" alt="<?php echo htmlspecialchars($note['title'], ENT_QUOTES); ?>" >
-        <?php endif; ?>
-    </div>
-
-    <h3><?php echo htmlspecialchars($note['title'], ENT_QUOTES); ?></h3><br>
-    <p>
-        <?php 
-            $words = explode(' ', $note['note']); 
-            $limitedWords = array_slice($words, 0, 30);
-            echo htmlspecialchars(implode(' ', $limitedWords), ENT_QUOTES);
-            if (count($words) > 30) echo '...'; 
-        ?>
-    </p>
-</div>
-
+                    <h3><?php echo htmlspecialchars($note['title']); ?></h3><br>
+                    <p>
+                        <?php   
+                            $noteContent = preg_replace('/\s+/', ' ', trim($note['note']));
+                    
+                            $words = explode(' ', $noteContent);
+                            echo htmlspecialchars(implode(' ', array_slice($words, 0, 30)), ENT_QUOTES);
+                            
+                            if (count($words) > 30) {
+                                echo '...';
+                            }
+                        ?>
+                    </p>
+                </div>
 
                 <div class="right-dash-list">
-                <p>Deadline: <span class="countdown" data-deadline="<?php echo $note['deadline']; ?>"></span></p><br>
+                    <p>Deadline: <span class="countdown" data-deadline="<?php echo $note['deadline']; ?>"></span></p><br>
 
                     <form method="POST" action="dashboard.php">
                         <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
@@ -255,12 +256,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
                         </button>
                     </form>
 
-                   <form method="POST" action="#" onsubmit="event.preventDefault(); openModal('<?php echo addslashes($note['note_id']); ?>', '<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>')">
-    <button type="submit">
-        <i class='bx bxs-edit'></i>
-    </button>
-</form>
-
+                    <form method="POST" action="#" onsubmit="event.preventDefault(); openModal('<?php echo addslashes($note['note_id']); ?>', '<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>')">
+                        <button type="submit">
+                            <i class='bx bxs-edit'></i>
+                        </button>
+                    </form>
                 </div>
             </div>
         <?php } ?>
@@ -268,6 +268,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
         <p>No pending tasks available.</p>
     <?php } ?>
 </div>
+
 
 
             </div>
@@ -360,7 +361,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
     <?php if (!empty($notes)) { ?>
         <?php foreach ($notes as $note) { ?>
             <div class="dash-list">
-                <div class="left-dash-list"  onclick="showPopup('<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>')">
+            <div class="left-dash-list leftMyList" onclick="showPopup('<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>', '<?php echo htmlspecialchars($note['image'], ENT_QUOTES); ?>')">
                     <h3><?php echo($note['title']); ?></h3><br>
                     <p>
                         <?php 
@@ -370,6 +371,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
                             if (count($words) > 30) echo '...'; 
                         ?>
                     </p>
+
+                    <div class="imageDisplay myListImage" style="display: none;">
+                    <?php if (!empty($note['image'])): ?>
+                        <img src="<?php echo htmlspecialchars($note['image'], ENT_QUOTES); ?>" alt="<?php echo htmlspecialchars($note['title'], ENT_QUOTES); ?>" >
+                    <?php endif; ?>
+                </div>
                 </div>
                 <div class="right-dash-list">
                 <p>Deadline: <span class="countdown" data-deadline="<?php echo $note['deadline']; ?>"></span></p><br>
@@ -462,7 +469,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
 
         <?php foreach ($completedTasks as $task) { ?>
             <div class="dash-list" >
-                <div class="left-dash-list" onclick="showPopup('<?php echo addslashes($task['title']); ?>', '<?php echo addslashes($task['note']); ?>', '<?php echo $task['deadline']; ?>')">
+            <div class="left-dash-list" onclick="showPopup('<?php echo addslashes($task['title']); ?>', '<?php echo addslashes($task['note']); ?>', '<?php echo $task['deadline']; ?>', '<?php echo htmlspecialchars($task['image'], ENT_QUOTES); ?>')">
                     <h3><?php echo($task['title']); ?></h3>
                     <p>
                         <?php 
@@ -472,6 +479,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
                             if (count($words) > 30) echo '...'; 
                         ?>
                     </p>
+                    <div class="imageDisplay">
+        <?php if (!empty($note['image'])): ?>
+            <img src="<?php echo htmlspecialchars($note['image'], ENT_QUOTES); ?>" alt="<?php echo htmlspecialchars($note['title'], ENT_QUOTES); ?>" >
+        <?php endif; ?>
+    </div>
                 </div>
                 <div class="right-dash-list">
                    
