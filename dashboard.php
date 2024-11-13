@@ -177,9 +177,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
         <div id="notePopup" class="note-popup">
         <div class="note-popup-content">
             <span class="close-popup" onclick="closePopup()">&times;</span>
-            <h3 id="popupTitle"></h3>
-            <p id="popupNote"></p><br>
-            <p>Remaining Time: <span id="popupCountdown"></span></p>
+            
+            <div class="leftPop">
+                 <img id="popupImage" src="" alt="Note Image">
+            </div>
+            <div class="rightPop">
+                <h3 id="popupTitle"></h3>
+                <p id="popupNote"></p><br>
+                <p>Remaining Time: <span id="popupCountdown"></span></p>
+            </div>
+            
         </div>
     </div>
         <section id="dashboard">
@@ -210,17 +217,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
     <?php if (!empty($notes)) { ?>
         <?php foreach ($notes as $note) { ?>
             <div class="dash-list">
-                <div class="left-dash-list"  onclick="showPopup('<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>')">
-                    <h3><?php echo($note['title']); ?></h3><br>
-                    <p>
-                        <?php 
-                            $words = explode(' ', $note['note']); 
-                            $limitedWords = array_slice($words, 0, 30);
-                            echo implode(' ', $limitedWords);
-                            if (count($words) > 30) echo '...'; 
-                        ?>
-                    </p>
-                </div>
+            <div class="left-dash-list" onclick="showPopup('<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>', '<?php echo htmlspecialchars($note['image'], ENT_QUOTES); ?>')">
+
+    
+    <div class="imageDisplay">
+        <?php if (!empty($note['image'])): ?>
+            <img src="<?php echo htmlspecialchars($note['image'], ENT_QUOTES); ?>" alt="<?php echo htmlspecialchars($note['title'], ENT_QUOTES); ?>" >
+        <?php endif; ?>
+    </div>
+
+    <h3><?php echo htmlspecialchars($note['title'], ENT_QUOTES); ?></h3><br>
+    <p>
+        <?php 
+            $words = explode(' ', $note['note']); 
+            $limitedWords = array_slice($words, 0, 30);
+            echo htmlspecialchars(implode(' ', $limitedWords), ENT_QUOTES);
+            if (count($words) > 30) echo '...'; 
+        ?>
+    </p>
+</div>
+
+
                 <div class="right-dash-list">
                 <p>Deadline: <span class="countdown" data-deadline="<?php echo $note['deadline']; ?>"></span></p><br>
 

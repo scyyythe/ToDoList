@@ -161,6 +161,7 @@ header ul li a.active::after {
     justify-content: center;
     align-items: center;
     z-index: 100;
+    
 }
 
 .note-popup-content {
@@ -171,6 +172,7 @@ header ul li a.active::after {
     position: relative;
     top: 10%;
     left: 25%;
+    display: flex;
     
     p{
         text-align: justify;
@@ -178,7 +180,13 @@ header ul li a.active::after {
         font-size: 12px;
     }
 }
-
+ .rightPop{
+    width: 70%;
+  
+}
+.leftPop{
+    width: 30%;
+}
 .close-popup {
     position: absolute;
     top: 10px;
@@ -261,6 +269,20 @@ header ul li a.active::after {
 .restore-task-btn:hover{
     color: rgb(24, 206, 24);
     cursor: pointer;
+}
+
+.imageDisplay img{
+    border-radius: 10px;
+    position: absolute;
+    right: 17%;
+    max-width: 3%;
+    height: auto;
+}
+#popupImage{
+    display: none;
+    max-width: 100%;
+    height: 300px;
+    border-radius: 20px;
 }
 /* my task section */
 #my-task{

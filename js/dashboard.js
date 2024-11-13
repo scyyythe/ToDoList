@@ -120,36 +120,28 @@ document.querySelectorAll('.folder-icon').forEach(folder => {
 
 
 
-document.getElementById('back-btn').addEventListener('click', function() {
-  
-    document.getElementById('folder-section').style.display = 'block';
-
-   
-    document.getElementById('folder-content').style.display = 'none';
-});
-
-function confirmDelete() {
-  const userConfirmation = confirm("Are you sure you want to delete this folder? This action cannot be undone.");
-
-  if (userConfirmation) {
-      
-      document.getElementById("delete-folder-form").submit();
-  }
-}
-
-// pop up note
-function showPopup(title, note, dueTime) {
-
+function showPopup(title, note, dueTime, imagePath) {
   document.getElementById('popupTitle').innerText = title;
   document.getElementById('popupNote').innerText = note;
-
   
+  const popupImage = document.getElementById('popupImage');
+  const leftPop = document.querySelector('.leftPop');
+  const rightPop = document.querySelector('.rightPop');
+
+  if (imagePath) {
+      popupImage.src = imagePath;
+      popupImage.style.display = 'block';
+      leftPop.style.display = 'block';
+      rightPop.style.width = '70%';
+  } else {
+      popupImage.style.display = 'none';
+      leftPop.style.display = 'none';
+      rightPop.style.width = '100%';
+  }
+
   let [hours, minutes, seconds] = dueTime.split(':').map(Number);
-
-  
   let currentDate = new Date();
   let deadlineDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), hours, minutes, seconds);
-
 
   let timerInterval = setInterval(function() {
       let now = new Date();
@@ -163,14 +155,13 @@ function showPopup(title, note, dueTime) {
           let minutesLeft = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
           let secondsLeft = Math.floor((timeRemaining % (1000 * 60)) / 1000);
           
-         
           document.getElementById('popupCountdown').innerText = hoursLeft + "h " + minutesLeft + "m " + secondsLeft + "s ";
       }
   }, 1000); 
 
-
   document.getElementById('notePopup').style.display = 'block';
 }
+
 
 function closePopup() {
   document.getElementById('notePopup').style.display = 'none';
