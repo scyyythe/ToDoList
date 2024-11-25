@@ -119,7 +119,6 @@ document.querySelectorAll('.folder-icon').forEach(folder => {
 
 
 
-
 function showPopup(title, note, dueTime, imagePath) {
   document.getElementById('popupTitle').innerText = title;
   document.getElementById('popupNote').innerText = note;
@@ -179,15 +178,52 @@ function closeTrashPopup() {
     document.getElementById('trashContainerOverlay').style.display = 'none';
 }
 
-// Function to open the modal
-function openModal() {
+
+//preview image
+function previewImage(event) {
+  const imagePreview = document.getElementById('image-preview');
+  const file = event.target.files[0];
+  
+  if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+          imagePreview.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+  }
+}
+
+//edit
+function openModal(note_id, title, note, deadline, image) {
+  console.log("Opening modal with image:", image);
+  
+
+  document.getElementById('note_id').value = note_id;
+  document.getElementById('title').value = title;
+  document.getElementById('note').value = note;
+  document.getElementById('modalDeadline').value = deadline;
+
+  const imagePreview = document.getElementById('image-preview');
+  if (imagePreview) {
+      if (image) {
+          console.log('Setting image preview to:', image);
+          const timestamp = new Date().getTime();
+          imagePreview.src = image + '?t=' + timestamp; 
+          document.getElementById('task-image').disabled = false;
+      } else {
+          console.log('No image, clearing preview');
+          imagePreview.src = '';  
+          document.getElementById('task-image').disabled = true; 
+      }
+  }
+
   document.getElementById('popupOverlay').style.display = 'block';
   document.getElementById('editNoteModal').style.display = 'block';
 }
+
 
 // Function to close the modal
 function closeModal() {
   document.getElementById('popupOverlay').style.display = 'none';
   document.getElementById('editNoteModal').style.display = 'none';
 }
-

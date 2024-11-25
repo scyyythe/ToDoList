@@ -604,10 +604,7 @@ body.show-popup {
         font-size: 13px;
     }
 }
-.all-task-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px; 
+.all-task-container {  
     padding: 20px;
     background-color: #f9f9f9; 
   
@@ -818,9 +815,9 @@ body.show-popup {
   }
 
   .task-list {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)) !important;
+    gap: 20px; 
   }
 
   .task-item {
@@ -1164,7 +1161,7 @@ body.show-popup {
     z-index: 1000; 
 }
 .edit-note-container {
-    max-width: 600px;
+    max-width: 1000px;
     margin: 0 auto;
     padding: 20px;
     background-color: #f9f9f9;
@@ -1178,7 +1175,7 @@ body.show-popup {
     
     form {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
     }
     
     label {
@@ -1209,9 +1206,36 @@ body.show-popup {
     }
     
 }
+/* Ensure the image section is visible for Premium users */
+.imageNote {
+    display: block; /* Make sure it's not set to 'none' */
+    margin-top: 10px;
+}
 
+.image-content img {
+    max-width: 100%; /* Make sure the image does not overflow */
+    height: auto; /* Adjust the height accordingly */
+}
 
-
+.image-preview{
+    max-width: 100%; 
+    height: auto;
+}
+.inputEdit{
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+.imageNote{
+    width: 40%;
+    padding: 20px;
+}
+.image-content img{
+    width: 100%;
+    border-radius: 20px;
+    height: 450px;
+}
 /* payment */
 .containerPayment {
     margin-top: 5%;

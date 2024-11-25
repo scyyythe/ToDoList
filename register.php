@@ -5,6 +5,7 @@ include("include/connection.php");
 $error = "";
 $success = "";
 
+
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
     $name = isset($_POST['name']) ? trim($_POST['name']) : null;
@@ -17,27 +18,28 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     } else {
         $accType = 'User';
         $accStatus = 'Pending';
-        $accPlan = 'Basic';
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-  
-        $statement = $conn->prepare("INSERT INTO accounts (u_name, email, username, password, u_type, u_status, plan) VALUES (:name, :email, :username, :hashed_password, :accType, :accStatus, :accPlan)");
+        $plan_id = 1001;
+        $statement = $conn->prepare("INSERT INTO accounts (u_name, email, username, password, u_type, u_status, plan_id) 
+                                     VALUES (:name, :email, :username, :hashed_password, :accType, :accStatus, :plan_id)");
 
         $statement->bindValue(':name', $name);
         $statement->bindValue(':email', $email);
         $statement->bindValue(':username', $username);
         $statement->bindValue(':hashed_password', $hashed_password);
         $statement->bindValue(':accType', $accType);
-        $statement->bindValue(':accPlan', $accPlan);
         $statement->bindValue(':accStatus', $accStatus);
+        $statement->bindValue(':plan_id', $plan_id); 
 
+      
         if ($statement->execute()) {
-          
             $_SESSION['username'] = $username;
             $_SESSION['name'] = $name; 
             $_SESSION['email'] = $email; 
             $_SESSION['accType'] = $accType;
             $_SESSION['accStatus'] = $accStatus;
+            $_SESSION['accPlan'] = $plan_id; 
 
             $success = "Registration successful!";
         } else {
@@ -46,6 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">

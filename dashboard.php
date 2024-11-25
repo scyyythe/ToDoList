@@ -9,6 +9,7 @@ $username = $_SESSION['username'];
 $email = $_SESSION['email'];
 $name = isset($_SESSION['name']) ? $_SESSION['name'] : 'User'; 
 $u_id = $_SESSION['u_id'];  
+$plan = $_SESSION['accPlan'];
 
 $accountInfo= new accountManage($conn,$u_id);
 $userPlan = $accountInfo->getUserPlan($username);
@@ -135,9 +136,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
         $note_id = $_POST['note_id'];
         $title = $_POST['title'];
         $noteContent = $_POST['note'];
-        $deadline=$_POST['deadline'];
-      
-        if ($noteManager->updateNote($note_id, $title, $noteContent, $deadline)) {
+        $deadline = $_POST['deadline'];
+        $file = isset($_FILES['task-image']) ? $_FILES['task-image'] : null;
+
+        if ($noteManager->updateNote($note_id, $title, $noteContent, $deadline, $file)) {
             echo "Note updated successfully.";
             header("Location: dashboard.php");
             exit;
@@ -146,6 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
         }
     }
 }
+
 ?>
 
 
@@ -240,28 +243,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
                 </div>
 
                 <div class="right-dash-list">
-                    <p>Deadline: <span class="countdown" data-deadline="<?php echo $note['deadline']; ?>"></span></p><br>
+    <p>Deadline: <span class="countdown" data-deadline="<?php echo $note['deadline']; ?>"></span></p><br>
 
-                    <form method="POST" action="dashboard.php">
-                        <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
-                        <button type="submit" name="complete_note" class="complete-note-btn mark-complete-btn">
-                            <i class='bx bx-check-circle'></i>
-                        </button>
-                    </form>
+    <!-- Mark Note as Complete -->
+    <form method="POST" action="dashboard.php">
+        <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
+        <button type="submit" name="complete_note" class="complete-note-btn mark-complete-btn">
+            <i class='bx bx-check-circle'></i>
+        </button>
+    </form>
 
-                    <form method="POST" action="dashboard.php" onsubmit="return confirm('Are you sure you want to delete this note?');">
-                        <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
-                        <button type="submit" class="delete-note-btn" name="deleteNote">
-                            <i class='bx bxs-trash'></i>
-                        </button>
-                    </form>
+    <!-- Delete Note -->
+    <form method="POST" action="dashboard.php" onsubmit="return confirm('Are you sure you want to delete this note?');">
+        <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
+        <button type="submit" class="delete-note-btn" name="deleteNote">
+            <i class='bx bxs-trash'></i>
+        </button>
+    </form>
 
-                    <form method="POST" action="#" onsubmit="event.preventDefault(); openModal('<?php echo addslashes($note['note_id']); ?>', '<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>')">
-                        <button type="submit">
-                            <i class='bx bxs-edit'></i>
-                        </button>
-                    </form>
-                </div>
+    <!-- Edit Note (Open Modal) -->
+    <form method="POST" action="#" onsubmit="event.preventDefault(); openModal('<?php echo addslashes($note['note_id']); ?>', '<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>', '<?php echo addslashes($note['image']); ?>')">
+        <button type="submit">
+            <i class='bx bxs-edit'></i> <!-- Icon for the edit button -->
+        </button>
+    </form>
+</div>
+
+
             </div>
         <?php } ?>
     <?php } else { ?>
@@ -273,32 +281,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
 
             </div>
         </section>
-        
-<div id="popupOverlay" class="popup-overlay">
-    
+
+        <div id="popupOverlay" class="popup-overlay" style="display:none;">
     <div id="editNoteModal" class="edit-note-container">
-       
         <span class="close-modal" onclick="closeModal()">×</span>
         <h1>Edit Note</h1>
-        <form method="POST" action="">
 
-            <input type="hidden" name="note_id" value="<?php echo htmlspecialchars($note['note_id']); ?>">
+     
+        <form method="POST" action="" enctype="multipart/form-data">
+    <div class="inputEdit">
+        <input type="hidden" name="note_id" id="note_id" value="">
 
-            <label for="title">Title</label>
-            <input type="text" id="title" name="title" value="<?php echo htmlspecialchars($note['title']); ?>" required>
+        <label for="title">Title</label>
+        <input type="text" id="title" name="title" required>
 
-            <label for="note">Note</label>
-            <textarea id="note" name="note" rows="5" required><?php echo htmlspecialchars($note['note']); ?></textarea>
+        <label for="note">Note</label>
+        <textarea id="note" name="note" rows="5" required></textarea>
 
-            <label for="deadline">Deadline</label>
-            <input type="time" id="modalDeadline" name="deadline" value="<?php echo date('H:i', strtotime($note['deadline'])); ?>" required>
+        <label for="deadline">Deadline</label>
+        <input type="time" id="modalDeadline" name="deadline" required>
+        <br>
+        <button type="submit" name="editNote">Save Changes</button>
+        <a href="javascript:void(0);" class="cancel-button" onclick="closeModal()">Cancel</a>
+    </div>
 
-            <br>
-            <button type="submit" name="editNote">Save Changes</button>
-            <a href="javascript:void(0);" class="cancel-button" onclick="closeModal()">Cancel</a>
-        </form>
+        <div class="imageNote">
+            <div class="image-content">
+                <label for="task-image">Change Image</label><br>
+                <img id="image-preview" src="<?php echo htmlspecialchars($note['image']); ?>" alt="Note Image">
+                <input type="file" id="task-image" name="task-image" accept="image/*" onchange="previewImage(event)"><br>
+            </div>
+        </div>
+
+</form>
+
+
     </div>
 </div>
+
 
 
         <section id="my-task" style="display: none;">
@@ -361,47 +381,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
     <?php if (!empty($notes)) { ?>
         <?php foreach ($notes as $note) { ?>
             <div class="dash-list">
-            <div class="left-dash-list leftMyList" onclick="showPopup('<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>', '<?php echo htmlspecialchars($note['image'], ENT_QUOTES); ?>')">
-                    <h3><?php echo($note['title']); ?></h3><br>
+                <div class="left-dash-list" onclick="showPopup('<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>', '<?php echo htmlspecialchars($note['image'], ENT_QUOTES); ?>')">
+                    <div class="imageDisplay">
+                        <?php if (!empty($note['image'])): ?>
+                            <img src="<?php echo htmlspecialchars($note['image']); ?>" alt="<?php echo htmlspecialchars($note['title']); ?>" >
+                        <?php endif; ?>
+                    </div>
+
+                    <h3><?php echo htmlspecialchars($note['title']); ?></h3><br>
                     <p>
-                        <?php 
-                            $words = explode(' ', $note['note']); 
-                            $limitedWords = array_slice($words, 0, 30);
-                            echo implode(' ', $limitedWords);
-                            if (count($words) > 30) echo '...'; 
+                        <?php   
+                            $noteContent = preg_replace('/\s+/', ' ', trim($note['note']));
+                    
+                            $words = explode(' ', $noteContent);
+                            echo htmlspecialchars(implode(' ', array_slice($words, 0, 30)), ENT_QUOTES);
+                            
+                            if (count($words) > 30) {
+                                echo '...';
+                            }
                         ?>
                     </p>
+                </div>
 
-                    <div class="imageDisplay myListImage" style="display: none;">
-                    <?php if (!empty($note['image'])): ?>
-                        <img src="<?php echo htmlspecialchars($note['image'], ENT_QUOTES); ?>" alt="<?php echo htmlspecialchars($note['title'], ENT_QUOTES); ?>" >
-                    <?php endif; ?>
-                </div>
-                </div>
                 <div class="right-dash-list">
-                <p>Deadline: <span class="countdown" data-deadline="<?php echo $note['deadline']; ?>"></span></p><br>
+    <p>Deadline: <span class="countdown" data-deadline="<?php echo $note['deadline']; ?>"></span></p><br>
 
-                    <form method="POST" action="dashboard.php">
-                        <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
-                        <button type="submit" name="complete_note" class="complete-note-btn mark-complete-btn">
-                            <i class='bx bx-check-circle'></i>
-                        </button>
-                    </form>
 
-                    <form method="POST" action="dashboard.php" onsubmit="return confirm('Are you sure you want to delete this note?');">
-                        <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
-                        <button type="submit" class="delete-note-btn" name="deleteNote">
-                            <i class='bx bxs-trash'></i>
-                        </button>
-                    </form>
+    <form method="POST" action="dashboard.php">
+        <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
+        <button type="submit" name="complete_note" class="complete-note-btn mark-complete-btn">
+            <i class='bx bx-check-circle'></i>
+        </button>
+    </form>
 
-                   <form method="POST" action="#" onsubmit="event.preventDefault(); openModal('<?php echo addslashes($note['note_id']); ?>', '<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>')">
-    <button type="submit">
-        <i class='bx bxs-edit'></i>
-    </button>
-</form>
 
-                </div>
+    <form method="POST" action="dashboard.php" onsubmit="return confirm('Are you sure you want to delete this note?');">
+        <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
+        <button type="submit" class="delete-note-btn" name="deleteNote">
+            <i class='bx bxs-trash'></i>
+        </button>
+    </form>
+
+
+    <form method="POST" action="#" onsubmit="event.preventDefault(); openModal('<?php echo addslashes($note['note_id']); ?>', '<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>', '<?php echo addslashes($note['image']); ?>')">
+        <button type="submit">
+            <i class='bx bxs-edit'></i> 
+        </button>
+    </form>
+</div>
+
+
             </div>
         <?php } ?>
     <?php } else { ?>
@@ -737,7 +766,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
 
                             <br>
             <div class="settings-right">
-                <p>Account Status: <span><b>Basic</b></span></p>
+                <p>Account Status: <span><b><?php echo $user['plan_name']; ?></b></span></p>
             
                 <div class="upgrade-plan-container">
                     <h3>Upgrade your plan</h3>

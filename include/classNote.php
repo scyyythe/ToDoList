@@ -23,15 +23,45 @@ class NoteManager {
     }
     
     
-    public function updateNote($noteId, $title, $note, $deadline) {
-        $statement = $this->conn->prepare("UPDATE note SET title = :title, note = :note, deadline=:deadline WHERE note_id = :note_id AND u_id = :u_id");
+    public function updateNote($noteId, $title, $note, $deadline, $file = null) {
+        // Prepare the update statement for title, note, and deadline
+        $sql = "UPDATE note SET title = :title, note = :note, deadline = :deadline";
+    
+        // If a new image is uploaded, handle the file upload process
+        if ($file && $file['tmp_name']) {
+            // Set up the image path for the uploaded image
+            $imagePath = 'uploads/' . $this->randomString(8) . '/' . $file['name'];
+            if (!is_dir(dirname($imagePath))) {
+                mkdir(dirname($imagePath), 0777, true);
+            }
+            move_uploaded_file($file['tmp_name'], $imagePath);
+            
+            // Add the image to the update statement
+            $sql .= ", image = :image";
+        }
+    
+        // Add the condition to the query to update the correct note
+        $sql .= " WHERE note_id = :note_id AND u_id = :u_id";
+        
+        // Prepare the statement
+        $statement = $this->conn->prepare($sql);
+        
+        // Bind the values for title, note, deadline, and user ID
         $statement->bindValue(':title', $title);
         $statement->bindValue(':note', $note);
         $statement->bindValue(':deadline', $deadline);
         $statement->bindValue(':note_id', $noteId);
         $statement->bindValue(':u_id', $this->u_id);
+        
+        // If there is a new image, bind the image path as well
+        if ($file && $file['tmp_name']) {
+            $statement->bindValue(':image', $imagePath);
+        }
+    
+        // Execute the query and return the result
         return $statement->execute();
     }
+    
     public function archivedNote($note_id) {
         $status = 'deleted';  
         $statement = $this->conn->prepare("UPDATE note SET status = :status WHERE note_id = :note_id");
