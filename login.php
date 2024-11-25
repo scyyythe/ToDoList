@@ -11,31 +11,37 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password = $_POST['password'];
 
     
-    $statement = $conn->prepare("SELECT u_id, u_name,email, username, password, u_type FROM accounts WHERE username = :username");
-    $statement->bindValue(':username', $username);
-    $statement->execute();
-    $user = $statement->fetch(PDO::FETCH_ASSOC);
+            $statement = $conn->prepare("
+            SELECT u_id, u_name, email, username, password, u_type, plan_id 
+            FROM accounts 
+            WHERE username = :username
+        ");
+        $statement->bindValue(':username', $username);
+        $statement->execute();
 
-    $result = $user && password_verify($password, $user['password']);
+        $user = $statement->fetch(PDO::FETCH_ASSOC);
+        $result = $user && password_verify($password, $user['password']);
 
-    if ($result) {
-       
-        $_SESSION['u_id'] = $user['u_id'];
-        $_SESSION['username'] = $user['username'];
-        $_SESSION['email'] = $user['email']; 
-        $_SESSION['name'] = $user['u_name']; 
-        $_SESSION['u_type'] = $user['u_type']; 
+        if ($result) {
 
-     
-        if ($user['u_type'] == 'Admin') { 
-            header("Location: admin.php");  
-        } else if ($user['u_type'] == 'User') {
-            header("Location: dashboard.php");  
+            $_SESSION['u_id'] = $user['u_id'];
+            $_SESSION['username'] = $user['username'];
+            $_SESSION['email'] = $user['email']; 
+            $_SESSION['name'] = $user['u_name']; 
+            $_SESSION['u_type'] = $user['u_type'];
+            $_SESSION['accPlan'] = $user['plan_id'] ?? 'default';
+
+
+            if ($user['u_type'] === 'Admin') {
+                header("Location: admin.php");
+            } else if ($user['u_type'] === 'User') {
+                header("Location: dashboard.php");
+            }
+            exit;
+        } else {
+            // Handle login failure
+            $error = "Invalid credentials";  
         }
-        die;  
-    } else {
-        $error = "Invalid credentials";  
-    }
 }
 ?>
 

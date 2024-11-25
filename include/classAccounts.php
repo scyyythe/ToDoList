@@ -8,14 +8,14 @@ class accountManage {
     }
 
   
-    public function updateUser($user_id, $name, $email, $username, $password = null) {
+    public function updateUser($user_id, $name, $email, $username) {
         $sql = "UPDATE accounts SET u_name = :name, email = :email, username = :username";
         
       
-        if ($password) {
-            $password = password_hash($password, PASSWORD_DEFAULT); 
-            $sql .= ", password = :password";
-        }
+        // if ($password) {
+        //     $password = password_hash($password, PASSWORD_DEFAULT); 
+        //     $sql .= ", password = :password";
+        // }
 
         $sql .= " WHERE u_id = :user_id";
 
@@ -26,9 +26,9 @@ class accountManage {
         $statement->bindValue(':user_id', $user_id);
 
         
-        if ($password) {
-            $statement->bindValue(':password', $password);
-        }
+        // if ($password) {
+        //     $statement->bindValue(':password', $password);
+        // }
 
         return $statement->execute(); 
     }

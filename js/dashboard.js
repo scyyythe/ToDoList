@@ -18,6 +18,18 @@
 
 document.getElementById('live-date').innerText = getFormattedDate();
 
+//logout
+function showLogoutModal() {
+  document.getElementById('logoutModal').style.display = 'flex';
+}
+
+function hideLogoutModal() {
+  document.getElementById('logoutModal').style.display = 'none';
+}
+
+function confirmLogout() {
+  window.location.href = 'logout.php'; // Redirect to the logout page
+}
 
 const allTaskLink = document.getElementById('allTask-link');
 const viewTaskContainer = document.getElementById('viewtaskContainer');

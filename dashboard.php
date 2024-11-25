@@ -11,6 +11,7 @@ $name = isset($_SESSION['name']) ? $_SESSION['name'] : 'User';
 $u_id = $_SESSION['u_id'];  
 $plan = $_SESSION['accPlan'];
 
+
 $accountInfo= new accountManage($conn,$u_id);
 $userPlan = $accountInfo->getUserPlan($username);
 
@@ -117,11 +118,10 @@ if ($_SERVER['REQUEST_METHOD'] == "POST"&& isset($_POST['updateProfile'])) {
     $name = $_POST['name'];
     $email = $_POST['email'];
     $username = $_POST['username'];
-    $password = isset($_POST['password']) ? $_POST['password'] : null;
     $status = "active"; 
     $plan = $_POST['plan']; 
 
-    if ($userManager->updateUser($user_id, $name, $email, $username, $status, $plan, $password)) {
+    if ($userManager->updateUser($user_id, $name, $email, $username, $status, $plan)) {
         header('Location: ' . $_SERVER['PHP_SELF']); 
         exit();
     } else {
@@ -171,12 +171,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
             <li><a href="#" id="dashboard-link">Dashboard</a></li>
             <li><a href="#" id="my-task-link">My List</a></li>
             <li><a href="#" id="settings-link">Settings</a></li>
-            <li><a href="index.php">Sign Out</a></li>
+            <li><a href="#" class="logout-btn" onclick="showLogoutModal()">Sign Out</a></li>
+
         </ul>
     </header>
 
     <div class="wrapper">
-        
+
+
+    <div class="modal" id="logoutModal">
+        <div class="modal-content">
+            <h4>Are you sure you want to <br>log out?</h4>
+            <div class="modal-buttons">
+                <br>
+                <button class="btn-cancel" onclick="hideLogoutModal()">Cancel</button>
+                <button class="btn-confirm" onclick="confirmLogout()">Log Out</button>
+            </div>
+        </div>
+    </div>
+
         <div id="notePopup" class="note-popup">
         <div class="note-popup-content">
             <span class="close-popup" onclick="closePopup()">&times;</span>
@@ -290,6 +303,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
             </div>
         </section>
 
+        <!-- EDIIITT NOTEEE -->
         <div id="popupOverlay" class="popup-overlay" style="display:none;">
     <div id="editNoteModal" class="edit-note-container">
         <span class="close-modal" onclick="closeModal()">×</span>
@@ -309,7 +323,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
         <label for="deadline">Deadline</label>
         <input type="time" id="modalDeadline" name="deadline" required>
         <br>
-        <button type="submit" name="editNote">Save Changes</button>
+        <button class="saveChanges" type="submit" name="editNote">Save Changes</button>
         <a href="javascript:void(0);" class="cancel-button" onclick="closeModal()">Cancel</a>
     </div>
 
@@ -558,7 +572,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
     <section id="folder-section">
     <h4>Organize your list!</h4><br>
 
-    <?php if ($plan == 'Basic'): ?>
+    <?php if ($plan == '1001'): ?>
     <p>You need a Premium plan to create a folder.</p>
   <?php else: ?>
     <h5>Create New Folder</h5>
