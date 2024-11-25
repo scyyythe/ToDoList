@@ -27,8 +27,6 @@ $folders = $folderManager->getUserFolders();
 $deletedNotes=$noteManager->getDeletedNotes();
 $notes = $noteManager->getPendingNotes();
 $completedTasks = $noteManager->getCompletedNotes();
-// $folder = $noteManager->getNotesByFolder($folderId);
-
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
     if (isset($_POST['addNote'])) {
@@ -112,7 +110,6 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 }
 
 $userManager = new accountManage($conn);
-
 if ($_SERVER['REQUEST_METHOD'] == "POST"&& isset($_POST['updateProfile'])) {
     $user_id = $_SESSION['u_id'];
     $name = $_POST['name'];
@@ -128,9 +125,9 @@ if ($_SERVER['REQUEST_METHOD'] == "POST"&& isset($_POST['updateProfile'])) {
         echo "<p>Failed to update profile.</p>";
     }
 }
+
+// RETRIEVE NOTE EDIT
 $user = $userManager->getUserInfo($u_id);
-
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
     if (isset($_POST['note_id'], $_POST['title'], $_POST['note'])) {
         $note_id = $_POST['note_id'];
@@ -148,6 +145,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
         }
     }
 }
+
+
 
 ?>
 
@@ -274,7 +273,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
         </button>
     </form>
 
-    <!-- Delete Note -->
+
     <form method="POST" action="dashboard.php" onsubmit="return confirm('Are you sure you want to delete this note?');">
         <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
         <button type="submit" class="delete-note-btn" name="deleteNote">
@@ -282,10 +281,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
         </button>
     </form>
 
-    <!-- Edit Note (Open Modal) -->
+
     <form method="POST" action="#" onsubmit="event.preventDefault(); openModal('<?php echo addslashes($note['note_id']); ?>', '<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>', '<?php echo addslashes($note['image']); ?>')">
         <button type="submit">
-            <i class='bx bxs-edit'></i> <!-- Icon for the edit button -->
+            <i class='bx bxs-edit'></i> 
         </button>
     </form>
 </div>
@@ -340,6 +339,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
 
     </div>
 </div>
+
 
 
 
@@ -583,21 +583,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
 
     <hr />
 
-    <div class="folders-container" id="folders-container">
-        <?php
-        if (!empty($folders)) {
-            foreach ($folders as $folder) {
-                echo '<div class="folder-icon" data-folder-id="' . $folder['folder_id'] . '">';
-                echo '<img src="img/icons8-folder-64.png" alt="">'; 
-                echo '<p>' . ($folder['folder_name']) . '</p>'; 
-                echo '</div>';
-            }
-        } 
-        ?>
-    </div>
+<div class="folders-container" id="folders-container">
+<?php
+if (!empty($folders)) {
+    foreach ($folders as $folder) {
+        echo '<div class="folder-icon" data-folder-id="' . $folder['folder_id'] . '" onclick="getFolderId(this)">';
+        echo '<img src="img/icons8-folder-64.png" alt="">';
+        echo '<p>' . ($folder['folder_name']) . '</p>';
+        echo '</div>';
+    }
+}
+?>
+
+</div>
   <?php endif; ?>
 
 </section>
+
+
 
            <!-- FOLDER CONTENT -->
           
@@ -605,10 +608,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
     <div class="folder-header">
         <button id="back-btn">&larr; Back to Folders</button>
 
-        <form method="POST" action="dashboard.php" id="delete-folder-form">
-            <input type="hidden" name="folder_id" value="<?php echo $folder['folder_id']; ?>"> 
-            <button type="button" id="delete-folder-btn" class="delete-folder" name="deleteFolder" onclick="confirmDelete()">Delete Folder</button>
-        </form>
+<div id="deleteContent" class="delete-content" style="display: none;">
+    <div class="delete-box">
+        <p>Are you sure you want to delete this folder?</p>
+        <button id="deleteConfirm" class="deleteConfirm">Yes</button>
+        <button id="deleteCancel" class="delete-button">No</button>
+    </div>
+</div>
+
+<form method="POST" action="dashboard.php" id="delete-folder-form">
+  <input type="hidden" name="folder_id" value="<?php echo $folder['folder_id']; ?>">
+  <button type="button" id="delete-folder-btn" class="delete-button" onclick="showDeleteAlert()">Delete Folder</button>
+</form>
+
     </div>
         
     <hr />
@@ -647,59 +659,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
 
     <!--FOLDER NOTE ONLY DISPLAAYYY -->
     <div class="all-task-container">
+          <!-- DISPLAY SA MGA BOXES NAA SA JS KAY DI MO GANA ANG PHP SAG UNSAON YATAAAAA KAPOYAAAA -->
+    </div>
 
-            <div class="task-list">       
-                        <?php foreach ($notes as $note) { ?>
-                <div class="task-box" onclick="showPopup('<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>')"> >
-                    <div class="check-task" >      
-                    <form method="POST" action="dashboard.php">
-                        <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
-                        <button type="submit" name="complete_note" class="complete-note-btn mark-complete-btn">
-                            <i class='bx bx-check-circle'></i>
-                        </button>
-                    </form>
-
-                    </div>
-                    <div class="task-box-top">
-                        <h3><?php echo ($note['title']); ?></h3>
-                        <p>
-                        <?php 
-                            $words = explode(' ', $note['note']); 
-                            $limitedWords = array_slice($words, 0, 30);
-                            echo implode(' ', $limitedWords);
-                            if (count($words) > 30) echo '...'; 
-                        ?>
-                    </p>
-                    </div>
-                    <div class="task-box-bottom">
-                        <div class="task-due">
-                        <p>Deadline: <span class="countdown" data-deadline="<?php echo $note['deadline']; ?>"></span></p><br>
-                        </div>
-                        <div class="task-actions">
-            
-                  
-                <form method="POST" action="dashboard.php" onsubmit="return confirm('Are you sure you want to delete this note?');">
-                    <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
-                    <button type="submit" class="delete-note-btn" name="deleteNote">
-                        <i class='bx bxs-trash'></i>
-                    </button>
-                </form>
-
-
-                <form method="POST" action="#" onsubmit="event.preventDefault(); openModal('<?php echo addslashes($note['note_id']); ?>', '<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>')">
-    <button type="submit">
-        <i class='bx bxs-edit'></i>
-    </button>
-</form>
-                        </div>
-                    </div>
-                </div>
-            <?php } ?>
-
-            </div>
-                
-            
-            </div>
 </section>
 
     </div>

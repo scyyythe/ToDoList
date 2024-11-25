@@ -21,16 +21,26 @@ class FolderManager {
         return false;
     }
     public function deleteFolder($folderId) {
-   
         if (!empty($folderId)) {
-           
-            $statement = $this->connection->prepare("DELETE FROM folder_tbl WHERE folder_id = :folder_id AND u_id = :u_id");
+            $statement = $this->connection->prepare("SELECT COUNT(*) AS active_notes FROM note WHERE folder_id = :folder_id AND status != 'deleted'");
             $statement->bindValue(':folder_id', $folderId);
-            $statement->bindValue(':u_id', $this->userId); 
-            return $statement->execute();
+            $statement->execute();
+            $result = $statement->fetch(PDO::FETCH_ASSOC);
+    
+            if ($result['active_notes'] == 0) {
+                // Archive the folder
+                $updateStatement = $this->connection->prepare("UPDATE folder_tbl SET folder_status = 'Archived' WHERE folder_id = :folder_id AND u_id = :u_id");
+                $updateStatement->bindValue(':folder_id', $folderId);
+                $updateStatement->bindValue(':u_id', $this->userId);
+                return $updateStatement->execute() ? "archived" : false;
+            } else {
+                // Folder cannot be archived because it contains active notes
+                return "cannot_archive";
+            }
         }
         return false;
     }
+    
     
     public function getUserFolders() {
         $statement = $this->connection->prepare("SELECT * FROM folder_tbl WHERE u_id = :u_id");

@@ -28,8 +28,9 @@ function hideLogoutModal() {
 }
 
 function confirmLogout() {
-  window.location.href = 'logout.php'; // Redirect to the logout page
+  window.location.href = 'logout.php'; 
 }
+
 
 const allTaskLink = document.getElementById('allTask-link');
 const viewTaskContainer = document.getElementById('viewtaskContainer');
@@ -112,23 +113,10 @@ tab2Button.addEventListener('click', () => switchTab('tab2'));
 function showCompletedTask() {
   document.getElementById('completed-task').style.display = 'block';
 }
-
 // Hide the completed tasks section
 function hideCompletedTask() {
   document.getElementById('completed-task').style.display = 'none';
 }
-
-
-//show folder
-document.querySelectorAll('.folder-icon').forEach(folder => {
-  folder.addEventListener('click', function() {
-      const folderId = this.getAttribute('data-folder-id');  
-      document.getElementById('folder-id').value = folderId;  
-      document.getElementById('folder-section').style.display = 'none';
-      document.getElementById('folder-content').style.display = 'block';
-  });
-});
-
 
 
 function showPopup(title, folderName, note, dueTime, imagePath) {
@@ -213,7 +201,6 @@ function previewImage(event) {
 //edit
 function openModal(note_id, title, note, deadline, image) {
   console.log("Opening modal with image:", image);
-  
 
   document.getElementById('note_id').value = note_id;
   document.getElementById('title').value = title;
@@ -244,4 +231,146 @@ function closeModal() {
   document.getElementById('popupOverlay').style.display = 'none';
   document.getElementById('editNoteModal').style.display = 'none';
 }
+
+
+//show folder CONTENT IF CLIKC
+document.querySelectorAll('.folder-icon').forEach(folder => {
+  folder.addEventListener('click', function() {
+      const folderId = this.getAttribute('data-folder-id');  
+      document.getElementById('folder-id').value = folderId;  
+      document.getElementById('folder-section').style.display = 'none';
+      document.getElementById('folder-content').style.display = 'block';
+  });
+});
+//back to folder section
+document.getElementById('back-btn').addEventListener('click', function() {
+  document.getElementById('folder-content').style.display = 'none';
+  document.getElementById('folder-section').style.display = 'block';
+});
+
+function showDeleteAlert(folderId) {
+  // Set the folder ID in the hidden input
+  document.getElementById("folder-id").value = folderId;
+
+  // Perform deletion via AJAX
+  fetch("dashboard.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: `folder_id=${folderId}`,
+  })
+    .then(response => response.json())
+    .then(data => {
+      // Show custom alert
+      const alertBox = document.getElementById("d_alert");
+      const alertMessage = document.getElementById("d_alert_message");
+      alertMessage.textContent = data.message; // Show message
+      alertBox.style.display = "flex";
+
+      // Handle OK button
+      document.getElementById("d_alert_ok").onclick = function () {
+        alertBox.style.display = "none";
+
+        // Reload the page or update the UI dynamically
+        if (data.status === "success") {
+          location.reload();
+        }
+      };
+    })
+    .catch(error => {
+      console.error("Error:", error);
+    });
+}
+
+
+
+
+//GET NOTES ON THE SPECIFIC FOLDER_ID
+function getFolderId(folderElement) {
+  var folderId = folderElement.getAttribute('data-folder-id');
+  
+  console.log("Folder ID: ", folderId);
+
+  fetch('include/getNotesByFolder.php', {
+    method: 'POST',
+    body: new URLSearchParams({
+        'folder_id': folderId
+    })
+  })
+  .then(response => {
+      if (!response.ok) {
+          throw new Error('Network response was not ok');
+      }
+      return response.text();
+  })
+  .then(responseText => {
+      try {
+          const data = JSON.parse(responseText);  
+          console.log('Response Data: ', data);
+          
+          const notesContainer = document.querySelector('.all-task-container');
+          if (notesContainer) {
+              notesContainer.innerHTML = ''; 
+
+              if (data.tasks && data.tasks.length > 0) {
+                  data.tasks.forEach(task => {
+                      const taskElement = document.createElement('div');
+                      taskElement.classList.add('task-box');
+
+                      taskElement.innerHTML = `
+                          <div class="check-task">      
+                              <form method="POST" action="dashboard.php">
+                                  <input type="hidden" name="note_id" value="${task.task_id}">
+                                  <button type="submit" name="complete_note" class="complete-note-btn mark-complete-btn">
+                                      <i class='bx bx-check-circle'></i>
+                                  </button>
+                              </form>
+                          </div>
+                          <div class="task-box-top">
+                              <h3>${task.task_name}</h3>
+                              <p>
+                                  ${task.task_description.split(' ').slice(0, 30).join(' ')}${task.task_description.split(' ').length > 30 ? '...' : ''} 
+                              </p>
+                          </div>
+                          <div class="task-box-bottom">
+                              <div class="task-due">
+                                  <p>Deadline: <span class="countdown" data-deadline="${task.task_deadline}"></span></p><br>
+                              </div>
+                              <div class="task-actions">
+                                  <form method="POST" action="dashboard.php" onsubmit="return confirm('Are you sure you want to delete this note?');">
+                                      <input type="hidden" name="note_id" value="${task.task_id}">
+                                      <button type="submit" class="delete-note-btn" name="deleteNote">
+                                          <i class='bx bxs-trash'></i>
+                                      </button>
+                                  </form>
+                                  <form method="POST" action="#" onsubmit="event.preventDefault(); openModal(${task.task_id}, '${task.task_name}', '${task.task_description}', '${task.task_deadline}','${task.task_image}' )">
+                                      <button type="submit">
+                                          <i class='bx bxs-edit'></i>
+                                      </button>
+                                  </form>
+                              </div>
+                          </div>
+                      `;
+                      const taskBoxTop = taskElement.querySelector('.task-box-top');
+                      const taskBoxBottom = taskElement.querySelector('.task-box-bottom');
+                      taskBoxTop.onclick = () => showPopup(task.task_name, task.task_folder, task.task_description, task.task_deadline, task.task_image);
+                      taskBoxBottom.onclick = () => showPopup(task.task_name, task.task_folder, task.task_description, task.task_deadline, task.task_image);
+
+                      notesContainer.appendChild(taskElement);
+                  });
+              } else {
+                  notesContainer.innerHTML = '<p>No tasks available in this folder.</p>';
+              }
+          } else {
+              console.error('Notes container not found');
+          }
+      } catch (error) {
+          console.error('Error parsing JSON:', error);
+          console.error('Response Text:', responseText);
+      }
+  })
+  .catch(error => console.error('Error:', error));
+}
+
 

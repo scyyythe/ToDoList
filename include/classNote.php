@@ -46,12 +46,9 @@ class NoteManager {
         $statement->bindValue(':note_id', $noteId);
         $statement->bindValue(':u_id', $this->u_id);
         
-        // If there is a new image, bind the image path as well
         if ($file && $file['tmp_name']) {
             $statement->bindValue(':image', $imagePath);
         }
-    
-        // Execute the query and return the result
         return $statement->execute();
     }
     
@@ -94,17 +91,18 @@ class NoteManager {
         return $statement->fetchAll(PDO::FETCH_ASSOC);
     }
     
-   public function getNotesByFolder($folderId) {
-    $statement = $this->conn->prepare(
-        "SELECT note_id, title, deadline, note, image, folder_id
-         FROM note
-         WHERE folder_id = :folder_id"
-    );
-    $statement->bindValue(':folder_id', $folderId);
-    $statement->execute();
-    return $statement->fetchAll(PDO::FETCH_ASSOC);
-}
-
+    public function getNotesByFolder($folderId) {
+        $statement = $this->conn->prepare(
+            "SELECT note.note_id, note.title, note.deadline, note.note, note.image, note.folder_id, folder.folder_name
+             FROM note
+             LEFT JOIN folder_tbl AS folder ON note.folder_id = folder.folder_id
+             WHERE note.folder_id = :folder_id AND note.status = 'Pending'"
+        );
+        $statement->bindValue(':folder_id', $folderId);
+        $statement->execute();
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
     
     public function getCompletedNotes() {
         $statement = $this->conn->prepare("SELECT * FROM note WHERE u_id = :u_id AND status = 'Completed'");
