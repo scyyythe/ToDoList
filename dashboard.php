@@ -26,7 +26,7 @@ $folders = $folderManager->getUserFolders();
 $deletedNotes=$noteManager->getDeletedNotes();
 $notes = $noteManager->getPendingNotes();
 $completedTasks = $noteManager->getCompletedNotes();
-
+// $folder = $noteManager->getNotesByFolder($folderId);
 
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
@@ -186,8 +186,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
             </div>
             <div class="rightPop">
                 <h3 id="popupTitle"></h3>
+                <h5>Folder Name: <span style="color: blueviolet;" id="folderName"></span></h5><br>
                 <p id="popupNote"></p><br>
-                <p>Remaining Time: <span id="popupCountdown"></span></p>
+                <p >Remaining Time: <span style="color: red;" id="popupCountdown"></span></p>
+
             </div>
             
         </div>
@@ -220,14 +222,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
     <?php if (!empty($notes)) { ?>
         <?php foreach ($notes as $note) { ?>
             <div class="dash-list">
-                <div class="left-dash-list" onclick="showPopup('<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>', '<?php echo htmlspecialchars($note['image'], ENT_QUOTES); ?>')">
+            <div class="left-dash-list" onclick="showPopup('<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['folder_name']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>', '<?php echo htmlspecialchars($note['image'], ENT_QUOTES); ?>')">
+
+
                     <div class="imageDisplay">
                         <?php if (!empty($note['image'])): ?>
                             <img src="<?php echo htmlspecialchars($note['image']); ?>" alt="<?php echo htmlspecialchars($note['title']); ?>" >
                         <?php endif; ?>
                     </div>
 
-                    <h3><?php echo htmlspecialchars($note['title']); ?></h3><br>
+                    <h3><?php echo htmlspecialchars($note['title']); ?></h3>
+
+                    <?php if (!empty($note['folder_name'])) { ?>
+                        <h5>Folder Name: <span style="color: blueviolet;"><?php echo htmlspecialchars($note['folder_name']); ?></span></h5><br>
+                    <?php } ?>
+
                     <p>
                         <?php   
                             $noteContent = preg_replace('/\s+/', ' ', trim($note['note']));
@@ -243,9 +252,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
                 </div>
 
                 <div class="right-dash-list">
-    <p>Deadline: <span class="countdown" data-deadline="<?php echo $note['deadline']; ?>"></span></p><br>
+    <p>Deadline: <span style="color: red;" class="countdown" data-deadline="<?php echo $note['deadline']; ?>"></span></p><br>
 
-    <!-- Mark Note as Complete -->
     <form method="POST" action="dashboard.php">
         <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
         <button type="submit" name="complete_note" class="complete-note-btn mark-complete-btn">
@@ -381,7 +389,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
     <?php if (!empty($notes)) { ?>
         <?php foreach ($notes as $note) { ?>
             <div class="dash-list">
-                <div class="left-dash-list" onclick="showPopup('<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>', '<?php echo htmlspecialchars($note['image'], ENT_QUOTES); ?>')">
+            <div class="left-dash-list" onclick="showPopup('<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['folder_name']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>', '<?php echo htmlspecialchars($note['image'], ENT_QUOTES); ?>')">
                     <div class="imageDisplay">
                         <?php if (!empty($note['image'])): ?>
                             <img src="<?php echo htmlspecialchars($note['image']); ?>" alt="<?php echo htmlspecialchars($note['title']); ?>" >
@@ -389,6 +397,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
                     </div>
 
                     <h3><?php echo htmlspecialchars($note['title']); ?></h3><br>
+                    
+                    <?php if (!empty($note['folder_name'])) { ?>
+                        <h5>Folder Name: <span style="color: blueviolet;"><?php echo htmlspecialchars($note['folder_name']); ?></span></h5><br>
+                    <?php } ?>
+                    
                     <p>
                         <?php   
                             $noteContent = preg_replace('/\s+/', ' ', trim($note['note']));
@@ -438,6 +451,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
     <?php } ?>
 </div>
 
+<!-- TRASHH CONTAINER -->
 <div id="trashContainerOverlay" onclick="closeTrashPopup()"></div>
 
 <div id="trashContainer">
@@ -476,7 +490,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
 </div>
 
 
-
+<!-- COMPLETEEED TASSKK -->
             <section id="completed-task" style="display: none;">
                <form method="POST" action="dashboard.php" onsubmit="return confirm('Are you sure you want to delete all completed notes?');">
                     <button type="submit" id="delete-completed-btn" name="deleteAllCompleted">
@@ -532,6 +546,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
 
             </section>
 
+
+
+            <!-- VIEWW ALL TASKK  LINK-->
             <a href="#" id="allTask-link">View All Task</a>
         </div>
     </div>
@@ -541,7 +558,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
     <section id="folder-section">
     <h4>Organize your list!</h4><br>
 
-    <?php if ($userPlan == 'Basic'): ?>
+    <?php if ($plan == 'Basic'): ?>
     <p>You need a Premium plan to create a folder.</p>
   <?php else: ?>
     <h5>Create New Folder</h5>
@@ -568,7 +585,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
 
 </section>
 
-           
+           <!-- FOLDER CONTENT -->
           
         <section id="folder-content" style="display:none;">
     <div class="folder-header">
@@ -611,10 +628,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
 
     <hr />
 
+
+
+
+    <!--FOLDER NOTE ONLY DISPLAAYYY -->
     <div class="all-task-container">
 
-            <div class="task-list">
-            
+            <div class="task-list">       
                         <?php foreach ($notes as $note) { ?>
                 <div class="task-box" onclick="showPopup('<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>')"> >
                     <div class="check-task" >      
@@ -674,7 +694,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
         </section>
 
 
-        <!-- VIEW ALL TASK CONTAINER -->
+        <!-- VIEW ALL TASK CONTAINER KATONG BOX BOX-->
         <section id="viewtaskContainer" style="display: none;">
 
             <div class="head-viewtastContainer">
@@ -687,7 +707,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
             <div class="task-list">
             
                         <?php foreach ($notes as $note) { ?>
-                <div class="task-box">
+                <div class="task-box" onclick="showPopup('<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>', '<?php echo htmlspecialchars($note['image'], ENT_QUOTES); ?>')">
+                    
                     <div class="check-task" onclick="showPopup('<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>')">      
                     <form method="POST" action="dashboard.php">
                         <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
@@ -707,6 +728,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
                             if (count($words) > 30) echo '...'; 
                         ?>
                     </p>
+
+                    
                     </div>
                     <div class="task-box-bottom">
                         <div class="task-due">

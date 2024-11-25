@@ -119,10 +119,13 @@ document.querySelectorAll('.folder-icon').forEach(folder => {
 
 
 
-function showPopup(title, note, dueTime, imagePath) {
+function showPopup(title, folderName, note, dueTime, imagePath) {
+
   document.getElementById('popupTitle').innerText = title;
   document.getElementById('popupNote').innerText = note;
+  document.getElementById('folderName').innerText = folderName;
   
+ 
   const popupImage = document.getElementById('popupImage');
   const leftPop = document.querySelector('.leftPop');
   const rightPop = document.querySelector('.rightPop');
@@ -138,10 +141,12 @@ function showPopup(title, note, dueTime, imagePath) {
       rightPop.style.width = '100%';
   }
 
+
   let [hours, minutes, seconds] = dueTime.split(':').map(Number);
   let currentDate = new Date();
   let deadlineDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), hours, minutes, seconds);
 
+  
   let timerInterval = setInterval(function() {
       let now = new Date();
       let timeRemaining = deadlineDate - now;
@@ -156,11 +161,11 @@ function showPopup(title, note, dueTime, imagePath) {
           
           document.getElementById('popupCountdown').innerText = hoursLeft + "h " + minutesLeft + "m " + secondsLeft + "s ";
       }
-  }, 1000); 
+  }, 1000);
 
+  // Display the popup
   document.getElementById('notePopup').style.display = 'block';
 }
-
 
 function closePopup() {
   document.getElementById('notePopup').style.display = 'none';
@@ -227,3 +232,4 @@ function closeModal() {
   document.getElementById('popupOverlay').style.display = 'none';
   document.getElementById('editNoteModal').style.display = 'none';
 }
+
