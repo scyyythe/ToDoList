@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 25, 2024 at 09:25 AM
+-- Generation Time: Nov 25, 2024 at 05:05 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -55,8 +55,16 @@ INSERT INTO `accounts` (`u_id`, `u_name`, `email`, `username`, `password`, `u_ty
 CREATE TABLE `folder_tbl` (
   `folder_id` int(100) NOT NULL,
   `u_id` int(100) NOT NULL,
-  `folder_name` varchar(50) NOT NULL
+  `folder_name` varchar(50) NOT NULL,
+  `folder_status` varchar(20) NOT NULL DEFAULT 'Active'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `folder_tbl`
+--
+
+INSERT INTO `folder_tbl` (`folder_id`, `u_id`, `folder_name`, `folder_status`) VALUES
+(43, 70, 'SCHOOL', 'Deleted');
 
 -- --------------------------------------------------------
 
@@ -80,7 +88,8 @@ CREATE TABLE `note` (
 --
 
 INSERT INTO `note` (`note_id`, `u_id`, `title`, `note`, `folder_id`, `image`, `deadline`, `status`) VALUES
-(137, 69, 'SIA', 'This is a sia.', NULL, '', '04:20:00', 'Completed');
+(163, 70, 'asd', 'asd', NULL, '', '23:00:00', 'Pending'),
+(164, 70, 'asd', 'asdad', NULL, '', '02:59:00', 'Pending');
 
 -- --------------------------------------------------------
 
@@ -191,13 +200,13 @@ ALTER TABLE `accounts`
 -- AUTO_INCREMENT for table `folder_tbl`
 --
 ALTER TABLE `folder_tbl`
-  MODIFY `folder_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `folder_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
 
 --
 -- AUTO_INCREMENT for table `note`
 --
 ALTER TABLE `note`
-  MODIFY `note_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=138;
+  MODIFY `note_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=165;
 
 --
 -- AUTO_INCREMENT for table `payment_tbl`

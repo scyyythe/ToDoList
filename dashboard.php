@@ -81,7 +81,13 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
             exit();
         }
         $_SESSION['error'] = "Failed to delete all completed notes.";
-    } elseif (isset($_POST['createFolder'])) {
+    } elseif (isset($_POST['deleteAllTrash'])) {
+        if ($noteManager->deleteAllTrashNotes()) {
+            header('Location: dashboard.php'); 
+            exit();
+        }
+        $_SESSION['error'] = "Failed to delete all completed notes.";
+    }elseif (isset($_POST['createFolder'])) {
         $folderName = $_POST['folder_name'];
 
         if ($folderManager->createFolder($folderName)) {
@@ -90,14 +96,6 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         } else {
             $_SESSION['error'] = "Failed to create folder.";
         }
-    }elseif (isset($_POST['deleteFolder'])) {
-        $folder_id = $_POST['folder_id'];
-
-        if ($folderManager-> deleteFolder($folder_id)) {
-            header('Location: dashboard.php'); 
-            exit();
-        }
-        $_SESSION['error'] = "Failed to delete folder.";
     }elseif (isset($_POST['restoreNote'])) {
         $note_id = $_POST['note_id'];
     
@@ -146,6 +144,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
     }
 }
 
+// Delete Folder
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['folder_id'])) {
     $folderManager = new FolderManager($conn, $u_id);
     $folderId = $_POST['folder_id'];
@@ -362,7 +361,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['folder_id'])) {
 
 
 
-
+<!-- MY LIST TAB -->
         <section id="my-task" style="display: none;">
 
             <div class="head-mytask">
@@ -489,7 +488,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['folder_id'])) {
 <div id="trashContainerOverlay" onclick="closeTrashPopup()"></div>
 
 <div id="trashContainer">
+
     <h3>Trash - Deleted Notes</h3>
+
+            <form method="POST" action="dashboard.php" onsubmit="return confirm('Are you sure you want to clear trash?');">
+                <button type="submit" id="delete-completed-btn" name="deleteAllTrash">
+                    <i class='bx bxs-trash'></i>
+                </button>
+            </form>
+
     <?php if (!empty($deletedNotes)) { ?>
         <?php foreach ($deletedNotes as $note) { ?>
             <div class="trash-item">
@@ -525,28 +532,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['folder_id'])) {
 
 
 <!-- COMPLETEEED TASSKK -->
+<div id="overlay" class="overlay" style="display: none;"></div>
             <section id="completed-task" style="display: none;">
-               <form method="POST" action="dashboard.php" onsubmit="return confirm('Are you sure you want to delete all completed notes?');">
-                    <button type="submit" id="delete-completed-btn" name="deleteAllCompleted">
-                        <i class='bx bxs-trash'></i>
-                    </button>
-                </form>
-
-           
+             
                 <div class="completed-header">
                     <h3>Completed Tasks</h3>
                     <a href="javascript:void(0);" onclick="hideCompletedTask()">Close</a>
                 </div>
-
+                
                 <div class="message">
 
-                </div>
-                <div class="dash-list-container">
+                </div><br>
+                <form method="POST" action="dashboard.php" onsubmit="return confirm('Are you sure you want to delete all completed notes?');">
+                    <button  type="submit" id="delete-completed-btn" name="deleteAllCompleted">
+                       Delete All Completed Notes<i class='bx bxs-trash'></i>
+                    </button>
+
+                </form>
+                <div class="dash-list-container" id="completedTask">
+                    <br>
+
     <?php if (!empty($completedTasks)) { ?>
 
         <?php foreach ($completedTasks as $task) { ?>
             <div class="dash-list" >
-            <div class="left-dash-list" onclick="showPopup('<?php echo addslashes($task['title']); ?>', '<?php echo addslashes($task['note']); ?>', '<?php echo $task['deadline']; ?>', '<?php echo htmlspecialchars($task['image'], ENT_QUOTES); ?>')">
+            <div class="left-dash-list" onclick="showPopup('<?php echo addslashes($task['title']); ?>', '<?php echo addslashes($task['folder_name']); ?>', '<?php echo addslashes($task['note']); ?>', '<?php echo $task['deadline']; ?>', '<?php echo htmlspecialchars($task['image'], ENT_QUOTES); ?>')">
                     <h3><?php echo($task['title']); ?></h3>
                     <p>
                         <?php 
@@ -587,7 +597,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['folder_id'])) {
         </div>
     </div>
 
-    <!-- tab 2 -->
+
+
+    <!-- tab 2 KATONG FOLDER-->
     <div class="tab-pane" id="tab2-content">
     <section id="folder-section">
     <h4>Organize your list!</h4><br>
@@ -708,12 +720,12 @@ if (!empty($folders)) {
           
             <div class="all-task-container">
 
-            <div class="task-list">
+            <div class="task-list-all">
             
                         <?php foreach ($notes as $note) { ?>
-                <div class="task-box" onclick="showPopup('<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>', '<?php echo htmlspecialchars($note['image'], ENT_QUOTES); ?>')">
+                <div class="task-box">
                     
-                    <div class="check-task" onclick="showPopup('<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>')">      
+                    <div class="check-task" >      
                     <form method="POST" action="dashboard.php">
                         <input type="hidden" name="note_id" value="<?php echo $note['note_id']; ?>">
                         <button type="submit" name="complete_note" class="complete-note-btn mark-complete-btn">
@@ -722,7 +734,7 @@ if (!empty($folders)) {
                     </form>
 
                     </div>
-                    <div class="task-box-top">
+                    <div class="task-box-top" onclick="showPopup('<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['folder_name']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>', '<?php echo htmlspecialchars($note['image'], ENT_QUOTES); ?>')">
                         <h3><?php echo ($note['title']); ?></h3>
                         <p>
                         <?php 
@@ -735,8 +747,8 @@ if (!empty($folders)) {
 
                     
                     </div>
-                    <div class="task-box-bottom">
-                        <div class="task-due">
+                    <div class="task-box-bottom" >
+                        <div class="task-due" onclick="showPopup('<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['folder_name']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>', '<?php echo htmlspecialchars($note['image'], ENT_QUOTES); ?>')">
                         <p>Deadline: <span class="countdown" data-deadline="<?php echo $note['deadline']; ?>"></span></p><br>
                         </div>
                         <div class="task-actions">
@@ -750,7 +762,7 @@ if (!empty($folders)) {
                 </form>
 
 
-                <form method="POST" action="#" onsubmit="event.preventDefault(); openModal('<?php echo addslashes($note['note_id']); ?>', '<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>')">
+                <form method="POST" action="#" onsubmit="event.preventDefault();  openModal('<?php echo addslashes($note['note_id']); ?>', '<?php echo addslashes($note['title']); ?>', '<?php echo addslashes($note['note']); ?>', '<?php echo $note['deadline']; ?>', '<?php echo addslashes($note['image']); ?>')">
     <button type="submit">
         <i class='bx bxs-edit'></i>
     </button>

@@ -105,7 +105,12 @@ class NoteManager {
     
     
     public function getCompletedNotes() {
-        $statement = $this->conn->prepare("SELECT * FROM note WHERE u_id = :u_id AND status = 'Completed'");
+        $statement = $this->conn->prepare(
+            "SELECT note.note_id, note.title, note.deadline, note.note, note.image, note.folder_id, folder.folder_name 
+             FROM note
+             LEFT JOIN folder_tbl AS folder ON note.folder_id = folder.folder_id
+             WHERE note.u_id = :u_id AND note.status = 'Completed'"
+        );
         $statement->bindValue(':u_id', $this->u_id);
         $statement->execute();
         return $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -128,6 +133,12 @@ class NoteManager {
 
     public function deleteAllCompletedNotes() {
         $stmt = $this->conn->prepare("DELETE FROM note WHERE u_id = :u_id AND status = 'Completed'");
+        $stmt->bindValue(':u_id', $this->u_id);
+        return $stmt->execute();
+    }
+
+    public function deleteAllTrashNotes() {
+        $stmt = $this->conn->prepare("DELETE FROM note WHERE u_id = :u_id AND status = 'deleted'");
         $stmt->bindValue(':u_id', $this->u_id);
         return $stmt->execute();
     }

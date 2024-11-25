@@ -114,10 +114,18 @@ function showCompletedTask() {
   document.getElementById('completed-task').style.display = 'block';
 }
 // Hide the completed tasks section
-function hideCompletedTask() {
-  document.getElementById('completed-task').style.display = 'none';
+function showCompletedTask() {
+  document.getElementById('completed-task').style.display = 'block'; 
+  document.getElementById('overlay').style.display = 'block'; 
 }
 
+function hideCompletedTask() {
+  document.getElementById('completed-task').style.display = 'none';
+  document.getElementById('overlay').style.display = 'none';
+}
+
+
+document.getElementById('overlay').onclick = hideCompletedTask;
 
 function showPopup(title, folderName, note, dueTime, imagePath) {
 

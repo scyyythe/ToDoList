@@ -376,8 +376,23 @@ header ul li a.active::after {
     color: #555;
     font-size: 14px;
 }
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); 
+  z-index: 999; 
+  display: none;
+}
 
-
+#delete-completed-btn{
+    border: none;
+    float: right;
+    position: relative;
+    bottom: 20px;
+}
 .tab-container {
     max-width: 100%;
     border-radius: 5px; 
@@ -540,9 +555,9 @@ header ul li a.active::after {
     width: 80%;
     padding: 2rem;
     background-color: #fff;
-    z-index: 50; /* Popup should be on top of the overlay */
+    z-index: 1000;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Shadow on the popup */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); 
 }
 
 
@@ -610,7 +625,8 @@ body.show-popup {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
     gap: 20px; 
-    grid-auto-rows: minmax(200px, auto); 
+    grid-auto-rows: minmax(200px, auto);
+   
 }
 
 .task-box {  
@@ -818,9 +834,15 @@ body.show-popup {
   }
 
   .task-list {
-    display: grid;
+    display: grid !important;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)) !important;
     gap: 20px; 
+  }
+  .task-list-all{
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)) !important;
+    gap: 20px; 
+    min-width: 1800px !important;
   }
 
   .task-item {
@@ -1081,7 +1103,6 @@ body.show-popup {
 }
 
 /* edit note/update note */
-
 .edit-note-container {
     max-width: 600px;
     margin-top: 100px !important;
@@ -1209,15 +1230,15 @@ body.show-popup {
     }
     
 }
-/* Ensure the image section is visible for Premium users */
+
 .imageNote {
-    display: block; /* Make sure it's not set to 'none' */
+    display: block; 
     margin-top: 10px;
 }
 
 .image-content img {
-    max-width: 100%; /* Make sure the image does not overflow */
-    height: auto; /* Adjust the height accordingly */
+    max-width: 100%; 
+    height: auto;
 }
 
 .image-preview{
