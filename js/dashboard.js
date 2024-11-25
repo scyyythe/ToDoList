@@ -248,40 +248,75 @@ document.getElementById('back-btn').addEventListener('click', function() {
   document.getElementById('folder-section').style.display = 'block';
 });
 
-function showDeleteAlert(folderId) {
-  // Set the folder ID in the hidden input
-  document.getElementById("folder-id").value = folderId;
+function handleDeleteResponse(response) {
+  const alertMessage = document.getElementById('d_alert_message');
+  const alertBox = document.getElementById('d_alert');
+  const alertButton = document.getElementById('d_alert_ok');
+  
+  if (response.message && response.status) {
+    alertMessage.textContent = response.message;
+    alertBox.style.display = 'flex';
+    
+    alertButton.onclick = function() {
+      console.log('OK button clicked');
+      alertBox.style.display = 'none'; 
+    };
+  } else {
+    console.error('Invalid response:', response); 
+  }
+}
 
-  // Perform deletion via AJAX
-  fetch("dashboard.php", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: `folder_id=${folderId}`,
-  })
-    .then(response => response.json())
+function handleDeleteResponse(response) {
+  const alertMessage = document.getElementById('d_alert_message');
+  const alertBox = document.getElementById('d_alert');
+  const alertButton = document.getElementById('d_alert_ok');
+  const deleteContent = document.getElementById('deleteContent'); 
+
+  if (response.message && response.status) {
+    alertMessage.textContent = response.message;
+    alertBox.style.display = 'flex'; 
+    
+    deleteContent.style.display = 'none';
+
+    alertButton.onclick = function() {
+      console.log('OK button clicked');
+      alertBox.style.display = 'none';
+    };
+  } else {
+    console.error('Invalid response:', response); 
+  }
+}
+
+function showDeleteAlert() {
+  const deleteContent = document.getElementById('deleteContent');
+  deleteContent.style.display = 'flex';  
+  
+  document.getElementById('deleteConfirm').onclick = function() {
+    console.log('Confirm button clicked'); 
+    
+    const form = document.getElementById('delete-folder-form');
+    const formData = new FormData(form);
+    
+    fetch(form.action, {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.json())  
     .then(data => {
-      // Show custom alert
-      const alertBox = document.getElementById("d_alert");
-      const alertMessage = document.getElementById("d_alert_message");
-      alertMessage.textContent = data.message; // Show message
-      alertBox.style.display = "flex";
-
-      // Handle OK button
-      document.getElementById("d_alert_ok").onclick = function () {
-        alertBox.style.display = "none";
-
-        // Reload the page or update the UI dynamically
-        if (data.status === "success") {
-          location.reload();
-        }
-      };
+      console.log('Response Data: ', data); 
+      handleDeleteResponse(data);  
     })
     .catch(error => {
-      console.error("Error:", error);
+      console.error('Error:', error); 
     });
+    
+  };
+
+  document.getElementById('deleteCancel').onclick = function() {
+    deleteContent.style.display = 'none';
+  };
 }
+
 
 
 
@@ -289,7 +324,7 @@ function showDeleteAlert(folderId) {
 //GET NOTES ON THE SPECIFIC FOLDER_ID
 function getFolderId(folderElement) {
   var folderId = folderElement.getAttribute('data-folder-id');
-  
+  document.getElementById('folder-id').value = folderId;
   console.log("Folder ID: ", folderId);
 
   fetch('include/getNotesByFolder.php', {

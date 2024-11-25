@@ -146,6 +146,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editNote'])) {
     }
 }
 
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['folder_id'])) {
+    $folderManager = new FolderManager($conn, $u_id);
+    $folderId = $_POST['folder_id'];
+    
+    $response = $folderManager->deleteFolder($folderId); 
+    
+    if ($response === "archived") {
+        $message = "Folder archived successfully!";
+        $status = "success";
+    } elseif ($response === "cannot_archive") {
+        $message = "Cannot delete folder because it contains active notes.";
+        $status = "error";
+    } else {
+        $message = "Failed to delete folder.";
+        $status = "error";
+    }
+
+    echo json_encode(['message' => $message, 'status' => $status]);
+    exit();
+}
 
 
 ?>
@@ -615,6 +635,14 @@ if (!empty($folders)) {
         <button id="deleteCancel" class="delete-button">No</button>
     </div>
 </div>
+
+<div id="d_alert" class="d_alert" style="display: none;">
+  <div class="d_content">
+    <p id="d_alert_message"></p>
+    <button id="d_alert_ok" class="d_button">OK</button>
+  </div>
+</div>
+
 
 <form method="POST" action="dashboard.php" id="delete-folder-form">
   <input type="hidden" name="folder_id" value="<?php echo $folder['folder_id']; ?>">

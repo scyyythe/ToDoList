@@ -29,7 +29,7 @@ class FolderManager {
     
             if ($result['active_notes'] == 0) {
                 // Archive the folder
-                $updateStatement = $this->connection->prepare("UPDATE folder_tbl SET folder_status = 'Archived' WHERE folder_id = :folder_id AND u_id = :u_id");
+                $updateStatement = $this->connection->prepare("UPDATE folder_tbl SET folder_status = 'Deleted' WHERE folder_id = :folder_id AND u_id = :u_id");
                 $updateStatement->bindValue(':folder_id', $folderId);
                 $updateStatement->bindValue(':u_id', $this->userId);
                 return $updateStatement->execute() ? "archived" : false;
