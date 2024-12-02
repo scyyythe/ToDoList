@@ -56,10 +56,38 @@ class accountManage {
 
 
     public function getActiveAccounts() {
-        $statement = $this->conn->prepare("SELECT * FROM accounts WHERE u_status = 'active'");
+        $statement = $this->conn->prepare("
+            SELECT accounts.*, plan_tbl.plan_name 
+            FROM accounts 
+            LEFT JOIN plan_tbl 
+            ON accounts.plan_id = plan_tbl.plan_id 
+            WHERE accounts.u_status = 'Active'
+        ");
         $statement->execute();
         return $statement->fetchAll(PDO::FETCH_ASSOC);
     }
+    
+    public function getSubscriptionPayments() {
+        $statement = $this->conn->prepare("
+            SELECT 
+                payment_tbl.p_id AS payment_id,
+                accounts.u_name AS user_name,
+                subscription_tbl.start_date,
+                subscription_tbl.end_date,
+                payment_tbl.date_payment,
+                payment_tbl.status AS payment_status
+            FROM 
+                payment_tbl
+            INNER JOIN subscription_tbl 
+                ON payment_tbl.subscription_id = subscription_tbl.subscription_id
+            INNER JOIN accounts
+                ON subscription_tbl.u_id = accounts.u_id
+        ");
+        $statement->execute();
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    
 
     public function getUserInfo($user_id) {
         $statement = $this->conn->prepare("

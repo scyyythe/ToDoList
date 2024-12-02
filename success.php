@@ -22,7 +22,7 @@ if (isset($_GET['paymentId'])) {
 
     // subscriptoin table insert
     $stmt = $conn->prepare("INSERT INTO subscription_tbl (start_date, end_date, plan_id, u_id, subscription_status) 
-                           VALUES (:start_date, :end_date, 1002, :u_id, 'active')");
+                           VALUES (:start_date, :end_date, 1002, :u_id, 'Active')");
     $stmt->execute([
         'start_date' => $start_date,
         'end_date' => $end_date,
@@ -30,7 +30,7 @@ if (isset($_GET['paymentId'])) {
     ]);
     $subscription_id = $conn->lastInsertId();  
     $payment_date = date('Y-m-d');  
-    $payment_status = 'successful';
+    $payment_status = 'Successful';
 
 
     //insert to payments table

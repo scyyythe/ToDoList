@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         $error = "All fields are required.";
     } else {
         $accType = 'User';
-        $accStatus = 'Pending';
+        $accStatus = 'Active';
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
         $plan_id = 1001;

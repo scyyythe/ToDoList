@@ -5,6 +5,7 @@ include("include/classAccounts.php");
 $accountManager = new accountManage($conn);
 $user = $accountManager->getPendingAccounts();
 $users = $accountManager->getActiveAccounts();
+$data = $accountManager->getSubscriptionPayments();
 
 if (isset($_POST['delete'])) {
     $user_id = $_POST['u_id'];
@@ -22,6 +23,8 @@ if (isset($_POST['u_id'])) {
     $user_id = $_POST['u_id'];
     $isUpdated = $accountManager->updateUserStatus($user_id, 'Active');
 }
+
+
 ?>
 
 
@@ -44,7 +47,7 @@ if (isset($_POST['u_id'])) {
                 <li><i class='bx bxs-dashboard'></i>&nbsp;&nbsp;<a href="" class="dashboard">Dashboard</a></li>
                 <li><i class='bx bxs-user'></i>&nbsp;&nbsp;<a href="" class="manage">Manage</a></li>
                 <li><i class='bx bx-credit-card'></i>&nbsp;&nbsp;<a href="" class="payments">Payments</a></li>
-                <li><i class='bx bxs-arrow-to-left'></i>&nbsp;&nbsp;<a href="login.php">Sign Out</a></li>
+                <li><i class='bx bxs-arrow-to-left'></i>&nbsp;&nbsp;<a href="logout.php" onclick="showLogoutModal()">Sign Out</a></li>
             </ul>
         </div>
     </div> 
@@ -83,7 +86,7 @@ if (isset($_POST['u_id'])) {
                             <th scope="col">Name</th>
                             <th scope="col">Email</th>
                             <th scope="col">Status</th>
-                            <th scope="col">Action</th>
+                            <!-- <th scope="col">Action</th> -->
                         </tr>
                     </thead>
                     <tbody>
@@ -94,12 +97,12 @@ if (isset($_POST['u_id'])) {
                             <td><?php echo $user['u_name']?></td>
                             <td><?php echo $user['email']?></td>
                             <td><?php echo $user['u_status']?></td>
-                            <td>
+                            <!-- <td>
                                 <form method="POST">
                                     <input type="hidden" name="u_id" value="<?php echo $user['u_id']; ?>">
                                     <button type="submit" class="btn btn-primary btn-sm">Activate</button>
                                 </form>
-                            </td>
+                            </td> -->
                         </tr>
                         <?php endforeach ?>
                     </tbody>
@@ -118,7 +121,7 @@ if (isset($_POST['u_id'])) {
                         <th scope="col">Email</th>
                         <th scope="col">Plan</th>
                         <th scope="col">Status</th>
-                        <th scope="col">Update</th>
+                        <!-- <th scope="col">Update</th> -->
                         <th scope="col">Delete</th>
                     </tr>
                 </thead>
@@ -129,17 +132,17 @@ if (isset($_POST['u_id'])) {
                         <td><?php echo $user['u_id']; ?></td>
                         <td><?php echo $user['u_name']; ?></td>
                         <td><?php echo $user['email']; ?></td>
-                        <td><?php echo $user['plan']; ?></td>
+                        <td><?php echo $user['plan_name']; ?></td>
                         <td><?php echo $user['u_status']; ?></td>
-                        <td>
+                        <!-- <td>
                             <div class="edit-button">
                                 <a href="updateUser.php?u_id=<?php echo $user['u_id']; ?>">Edit</a>
                             </div>
-                        </td>
+                        </td> -->
                         <td>
                             <form method="POST">
                                 <input type="hidden" name="u_id" value="<?php echo $user['u_id']; ?>">
-                                <button type="submit" class="btn btn-danger" name="delete">Delete</button>
+                                <button type="submit" class="btn btn-danger" name="delete">Archive</button>
                             </form>
                         </td>
                     </tr>
@@ -149,29 +152,38 @@ if (isset($_POST['u_id'])) {
         </div> 
 
         <div class="container payments-con" id="payments-con">
-            <h5><strong>Payments</strong></h5>
-            <table class="table users">
-                <thead>
-                    <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Date of Payment</th>
-                        <th scope="col">Payment Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <th scope="row">1</th>
-                        <td>Angel Canete</td>
-                        <td>09/10/24</td>
-                        <td>Paid</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div> 
+    <h5><strong>Payments</strong></h5>
+    <table class="table users">
+        <thead>
+            <tr>
+                <th scope="col">Payment ID</th>
+                <th scope="col">Name</th>
+                <th scope="col">Start Date</th>
+                <th scope="col">End Date</th>
+                <th scope="col">Date of Payment</th>
+                <th scope="col">Payment Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($data as $row): ?>
+            <tr>
+                <th scope="row"><?= $row['payment_id']; ?></th>
+                <td><?= $row['user_name']; ?></td>
+                <td><?= $row['start_date']; ?></td>
+                <td><?= $row['end_date']; ?></td>
+                <td><?= $row['date_payment']; ?></td>
+                <td><?= $row['payment_status']; ?></td>
+            </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
+
+
     </div> 
 
     <script src="js/bootstrap.bundle.min.js"></script>
     <script src="js/script.js"></script>
+    
 </body>
 </html>
