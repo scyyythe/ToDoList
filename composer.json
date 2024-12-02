@@ -1,0 +1,14 @@
+{
+    "name": "acer/to-do-list",
+    "description": "A to-do list application for task management.",
+    "type": "project",
+    "require": {
+        "stripe/stripe-php": "^16.3"
+    },
+    "authors": [
+        {
+            "name": "Angel Canete",
+            "email": "caneteangel187@gmail.com"
+        }
+    ]
+}

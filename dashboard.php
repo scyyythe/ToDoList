@@ -820,7 +820,7 @@ if (!empty($folders)) {
                         <li>Create Folders to organize lists</li>
                     </ul>
             
-                    <button onclick="window.location.href='payment.php'">Get Plan</button>
+                    <button onclick="window.location.href='stripePayment.php'">Get Plan</button>
 
                 </div>
             </div>
