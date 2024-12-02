@@ -12,7 +12,7 @@ $email = $_SESSION['email'];
     <meta charset="UTF-8">
     <title>Payment</title>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="shortcut icon" href="img/paypal-logo-24 (1).png" type="image/x-icon">
+    <link rel="shortcut icon" href="img/icons8-stripe-24.png" type="image/x-icon">
     <link rel="stylesheet" href="css/style-user.css">
 </head>
 <body>
@@ -34,12 +34,10 @@ $email = $_SESSION['email'];
         <button id="stripe-button">Pay with Stripe</button>
     </div>
 
-    <!-- Card Element to mount the Stripe Card input -->
-    <div id="card-element">
-        <!-- A Stripe Element will be inserted here -->
-    </div>
 
-    <!-- A div to show Stripe card errors -->
+    <div id="card-element">
+       
+    </div>
     <div id="card-errors" role="alert"></div>
 </div>
 
@@ -50,16 +48,15 @@ $email = $_SESSION['email'];
 
     // Create an instance of the card element
     const card = elements.create('card', {
-        hidePostalCode: true // This will hide the postal code input
+        hidePostalCode: true 
     });
-    card.mount('#card-element');  // Mount the card element into the DOM
 
+    card.mount('#card-element');  
     document.getElementById('stripe-button').addEventListener('click', async function() {
     // Create a token with the card details
     const {token, error} = await stripe.createToken(card);
 
     if (error) {
-        // Display error if token creation fails
         document.getElementById('card-errors').textContent = error.message;
     } else {
         fetch('create-payment-intent.php', {
@@ -68,13 +65,13 @@ $email = $_SESSION['email'];
         'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-        amount: 10000, // Amount in cents (100 PHP)
-        token: token.id  // Send token ID for payment processing
+        amount: 10000, 
+        token: token.id  
     }),
 })
-.then(response => response.text())  // Use .text() instead of .json() to log raw response
+.then(response => response.text())  
 .then(text => {
-    console.log(text);  // Log the raw response text to see what the server is sending back
+    console.log(text);  
     try {
         const paymentIntent = JSON.parse(text);  // Manually parse it if it's valid JSON
         if (paymentIntent.error) {
@@ -83,22 +80,20 @@ $email = $_SESSION['email'];
         } else {
             const clientSecret = paymentIntent.clientSecret;  // Correctly extract clientSecret
 
-            // Confirm the payment using the client secret
             stripe.confirmCardPayment(clientSecret, {
                 payment_method: {
                     card: card,  // Use the card object here
                     billing_details: {
-                        name: '<?php echo $name; ?>', // Name from PHP session
-                        email: '<?php echo $email; ?>', // Email from PHP session
+                        name: '<?php echo $name; ?>', 
+                        email: '<?php echo $email; ?>',
                     }
                 }
             }).then(result => {
                 if (result.error) {
-                    // Show error message if payment fails
+                  
                     alert('Payment failed: ' + result.error.message);
                 } else if (result.paymentIntent.status === 'succeeded') {
-                    // Redirect to success page if payment is successful
-                    alert('Payment successful!');
+                
                     window.location.href = 'success.php?paymentId=' + result.paymentIntent.id;
                 }
             });
