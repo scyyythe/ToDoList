@@ -16,19 +16,19 @@ if (isset($data['amount'])) {
 }
 
 try {
-    // Create a PaymentIntent with the specified amount
+    // create a PaymentIntent 
     $paymentIntent = \Stripe\PaymentIntent::create([
         'amount' => $amount,
-        'currency' => 'php',  // Use PHP currency
+        'currency' => 'php',  
     ]);
 
-    // Send the client secret back to the frontend
+    // send the secret back to the frontend
     header('Content-Type: application/json');
     echo json_encode([
         'clientSecret' => $paymentIntent->client_secret
     ]);
 } catch (\Stripe\Exception\ApiErrorException $e) {
-    // Return error if payment intent creation fails
+    
     header('Content-Type: application/json');
     echo json_encode([
         'error' => $e->getMessage()

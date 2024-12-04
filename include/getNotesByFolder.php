@@ -44,8 +44,8 @@ if (isset($_POST['folder_id'])) {
             ];
         }
     } else {
-        $response['tasks'] = [];  // Ensure tasks is an empty array
-        $response['message'] = 'No notes found in this folder.'; // Add message if no notes
+        $response['tasks'] = [];  
+        $response['message'] = 'No notes found in this folder.'; 
     }
 
     header('Content-Type: application/json');
