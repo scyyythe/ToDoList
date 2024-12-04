@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
     manageContainer.style.display = 'none';
     paymentsContainer.style.display = 'none';
  
-    // Dashboard
+    // dashboard
     dashboardLink.addEventListener('click', function(e) {
         e.preventDefault(); 
         dashboardContainer.style.display = 'block';
@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
        paymentsContainer.style.display='none';
     });
  
-    //Management
+    //management
     manageLink .addEventListener('click', function(e) {
         e.preventDefault();
         dashboardContainer.style.display = 'none';
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
         paymentsContainer.style.display='none';
     });
  
-    //Payments
+    //payments
     paymentsLink .addEventListener('click', function(e) {
         e.preventDefault();
         dashboardContainer.style.display = 'none';
@@ -52,13 +52,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
  });
  
-// For the view modal
+// view modal
 const viewModal = document.getElementById('modalview');
 viewModal.addEventListener('shown.bs.modal', () => {
   
 });
 
-// For the edit modal
+// edit modal
 const editModal = document.getElementById('editmodal');
 editModal.addEventListener('shown.bs.modal', () => {
  

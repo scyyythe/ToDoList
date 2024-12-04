@@ -49,7 +49,7 @@ class accountManage {
     }
 
     public function getPendingAccounts() {
-        $statement = $this->conn->prepare("SELECT * FROM accounts WHERE u_status = 'pending'");
+        $statement = $this->conn->prepare("SELECT * FROM accounts WHERE u_status = 'Active'");
         $statement->execute();
         return $statement->fetchAll(PDO::FETCH_ASSOC);
     }

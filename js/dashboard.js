@@ -109,11 +109,11 @@ tab1Button.addEventListener('click', () => switchTab('tab1'));
 tab2Button.addEventListener('click', () => switchTab('tab2'));
 
 
-// Show the completed tasks section
+//  completed tasks section
 function showCompletedTask() {
   document.getElementById('completed-task').style.display = 'block';
 }
-// Hide the completed tasks section
+// Hide  completed tasks 
 function showCompletedTask() {
   document.getElementById('completed-task').style.display = 'block'; 
   document.getElementById('overlay').style.display = 'block'; 
@@ -171,7 +171,7 @@ function showPopup(title, folderName, note, dueTime, imagePath) {
       }
   }, 1000);
 
-  // Display the popup
+  // display popup
   document.getElementById('notePopup').style.display = 'block';
 }
 
@@ -234,7 +234,7 @@ function openModal(note_id, title, note, deadline, image) {
 }
 
 
-// Function to close the modal
+//  close the modal
 function closeModal() {
   document.getElementById('popupOverlay').style.display = 'none';
   document.getElementById('editNoteModal').style.display = 'none';
@@ -324,9 +324,6 @@ function showDeleteAlert() {
     deleteContent.style.display = 'none';
   };
 }
-
-
-
 
 
 //GET NOTES ON THE SPECIFIC FOLDER_ID
