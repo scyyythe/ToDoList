@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 25, 2024 at 05:05 PM
+-- Generation Time: Dec 04, 2024 at 04:25 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -43,8 +43,7 @@ CREATE TABLE `accounts` (
 --
 
 INSERT INTO `accounts` (`u_id`, `u_name`, `email`, `username`, `password`, `u_type`, `plan_id`, `u_status`) VALUES
-(69, 'Jamaica Anuba', 'jamaicaanuba@gmail.com', 'jai', '$2y$10$bPSZ8VHbqBPtdam0lSO4sOjG0kpbS63Q1joEZNb9DFp/o1jy/mhpi', 'User', 1001, 'Pending'),
-(70, 'Jeralyn Peritos', 'jeralynpreitos@gmail.com', 'jera', '$2y$10$EwtoSLSQzFpb7AJyRUyTn.ZxRgNhb0aR13vjKBIkFbYR3pWjeTCEy', 'User', 1002, 'Pending');
+(69, 'Jamaica Anuba', 'jamaicaanuba@gmail.com', 'jai', '$2y$10$bPSZ8VHbqBPtdam0lSO4sOjG0kpbS63Q1joEZNb9DFp/o1jy/mhpi', 'Admin', 1002, 'Active');
 
 -- --------------------------------------------------------
 
@@ -58,13 +57,6 @@ CREATE TABLE `folder_tbl` (
   `folder_name` varchar(50) NOT NULL,
   `folder_status` varchar(20) NOT NULL DEFAULT 'Active'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `folder_tbl`
---
-
-INSERT INTO `folder_tbl` (`folder_id`, `u_id`, `folder_name`, `folder_status`) VALUES
-(43, 70, 'SCHOOL', 'Deleted');
 
 -- --------------------------------------------------------
 
@@ -82,14 +74,6 @@ CREATE TABLE `note` (
   `deadline` time NOT NULL,
   `status` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `note`
---
-
-INSERT INTO `note` (`note_id`, `u_id`, `title`, `note`, `folder_id`, `image`, `deadline`, `status`) VALUES
-(163, 70, 'asd', 'asd', NULL, '', '23:00:00', 'Pending'),
-(164, 70, 'asd', 'asdad', NULL, '', '02:59:00', 'Pending');
 
 -- --------------------------------------------------------
 
@@ -194,25 +178,25 @@ ALTER TABLE `subscription_tbl`
 -- AUTO_INCREMENT for table `accounts`
 --
 ALTER TABLE `accounts`
-  MODIFY `u_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
+  MODIFY `u_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=72;
 
 --
 -- AUTO_INCREMENT for table `folder_tbl`
 --
 ALTER TABLE `folder_tbl`
-  MODIFY `folder_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
+  MODIFY `folder_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 
 --
 -- AUTO_INCREMENT for table `note`
 --
 ALTER TABLE `note`
-  MODIFY `note_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=165;
+  MODIFY `note_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=168;
 
 --
 -- AUTO_INCREMENT for table `payment_tbl`
 --
 ALTER TABLE `payment_tbl`
-  MODIFY `p_id` int(100) NOT NULL AUTO_INCREMENT;
+  MODIFY `p_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `plan_tbl`
@@ -224,7 +208,7 @@ ALTER TABLE `plan_tbl`
 -- AUTO_INCREMENT for table `subscription_tbl`
 --
 ALTER TABLE `subscription_tbl`
-  MODIFY `subscription_id` int(100) NOT NULL AUTO_INCREMENT;
+  MODIFY `subscription_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- Constraints for dumped tables
